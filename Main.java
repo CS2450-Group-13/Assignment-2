@@ -4,7 +4,8 @@ import javafx.stage.Stage;
 public class Main extends Application {
 
     public static void main(String[] args) {
-        launch(args);
+        Course course1 = new Course("CS", 4680, "Prompt Engineering", 3);
+        System.out.println(course1);
     }
 
     @Override

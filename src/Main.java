@@ -29,6 +29,7 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
         // TODO Auto-generated method stub
+        // Implement main stage here, could make some optional files for other "pages" in our nav
         throw new UnsupportedOperationException("Unimplemented method 'start'");
     }
 }

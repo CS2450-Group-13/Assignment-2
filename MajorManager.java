@@ -1,5 +1,3 @@
-package src.logic;
-import src.data.Major;
 import java.util.ArrayList;
 import java.util.List;
 

@@ -1,4 +1,3 @@
-package src.data;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -14,8 +13,9 @@ public class Course {
     private List<Course> prerequisites;
     Random random = new Random();
 
-    public Course(String courseMajor, int courseNum, String name, int units) {
+    public Course(String courseMajor, CourseCategory category, int courseNum, String name, int units) {
         this.courseMajor = courseMajor;
+        this.category = category;
         this.courseNum = courseNum;
         this.name = name;
         this.units = units;
@@ -23,8 +23,9 @@ public class Course {
         this.prerequisites = new ArrayList<>();
     }
 
-    public Course(String courseMajor, int courseNum, String name, int units, List<Course> prerequisites) {
+    public Course(String courseMajor, CourseCategory category, int courseNum, String name, int units, List<Course> prerequisites) {
         this.courseMajor = courseMajor;
+        this.category = category;
         this.courseNum = courseNum;
         this.name = name;
         this.units = units;

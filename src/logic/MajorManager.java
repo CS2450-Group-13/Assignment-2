@@ -3,7 +3,7 @@ import src.data.Major;
 import java.util.ArrayList;
 import java.util.List;
 
-// Handles data logic for majors
+// Data logic for Majors to print to UI
 public class MajorManager {
     private List<Major> majors = new ArrayList<>();
 

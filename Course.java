@@ -1,3 +1,5 @@
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 // Class for each course
@@ -7,14 +9,25 @@ public class Course {
     private int courseNum;
     private int courseId;
     private int units;
+    private List<Course> prerequisites;
     Random random = new Random();
 
     public Course(String courseMajor, int courseNum, String name, int units) {
+        this.courseMajor = courseMajor;
+        this.courseNum = courseNum;
         this.name = name;
         this.units = units;
-        this.courseNum = courseNum;
+        this.courseId = random.nextInt(1000000) + random.nextInt(1000000);
+        this.prerequisites = new ArrayList<>();
+    }
+
+    public Course(String courseMajor, int courseNum, String name, int units, List<Course> prerequisites) {
         this.courseMajor = courseMajor;
-        this.courseId = random.nextInt(1000000) + random.nextInt(100000);
+        this.courseNum = courseNum;
+        this.name = name;
+        this.units = units;
+        this.courseId = random.nextInt(1000000) + random.nextInt(1000000);
+        this.prerequisites = (prerequisites != null) ? prerequisites : new ArrayList<>();
     }
 
     public String getName() {
@@ -29,12 +42,24 @@ public class Course {
         return units;
     }
 
+    public List<Course> getPrerequisites() {
+        return prerequisites;
+    }
+
     public void setName(String name) {
         this.name = name;
     }
 
     public void setUnits(int units) {
         this.units = units;
+    }
+
+    public void addPrerequisite(Course course) {
+        prerequisites.add(course);
+    }
+
+    public boolean hasPrerequisites() {
+        return !prerequisites.isEmpty();
     }
 
     @Override

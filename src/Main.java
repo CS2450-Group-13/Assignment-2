@@ -10,16 +10,23 @@ import src.data.CourseCategory;
 public class Main extends Application {
 
     public static void main(String[] args) {
-        // Course course 1 = new Course();
+        Course course1 = new Course(
+            "CS", 
+            CourseCategory.MAJOR,
+            1400,
+            "Intro to Programming",
+            3 
+            );
         List<Course> course1Prerequisites = new ArrayList<>();
-        // course1Prerequisites.add();
+        course1Prerequisites.add(course1);
         Course course2 = new Course(
             "CS", 
             CourseCategory.MAJOR_ELECTIVE,
-            4680, 
-            "Prompt Engineering", 
+            2450, 
+            "UI/UX Design", 
             3, 
-            course1Prerequisites);
+            course1Prerequisites
+            );
         System.out.println(course2);
         System.out.println(course2.getPrerequisites());
         System.out.println(course2.getCourseCategory());

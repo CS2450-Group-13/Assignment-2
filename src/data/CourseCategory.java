@@ -1,3 +1,4 @@
+package src.data;
 public enum CourseCategory {
     GENERAL_EDUCATION,
     MAJOR,

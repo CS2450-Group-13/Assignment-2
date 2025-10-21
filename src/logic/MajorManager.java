@@ -1,5 +1,8 @@
+package src.logic;
 import java.util.ArrayList;
 import java.util.List;
+
+import src.data.Major;
 
 // Data logic for Majors to print to UI
 public class MajorManager {

@@ -1,7 +1,11 @@
+package src;
 import java.util.ArrayList;
 import java.util.List;
+
 import javafx.application.Application;
 import javafx.stage.Stage;
+import src.data.Course;
+import src.data.CourseCategory;
 
 public class Main extends Application {
 

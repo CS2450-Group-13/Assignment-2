@@ -8,6 +8,7 @@ public class Student {
     private boolean isUndergrad;
     private Major major;
     private boolean gradStatus;
+    private double gpa;
 
     public Student(
         String name, 
@@ -49,6 +50,20 @@ public class Student {
 
     public Major getMajor() {
         return major;
+    }
+
+    public double getGPA() {
+        return gpa;
+    }
+
+    public String getStanding() {
+        if (gpa >= 2.3) {
+            return "Good Standing";
+        } else if (gpa >= 2.0 && gpa <= 2.2) {
+            return "At-risk";
+        } else {
+            return "Academic Probation";
+        }
     }
 
     public String getGradStatus() {

@@ -83,15 +83,7 @@ public class Main extends Application {
             child.getStyleClass().add("nav-bar-item");
         }
 
-        int i = 0;
-        // CONFIGURE
-        for (Node child : navBar.getChildren()) {
-            child.setOnMouseClicked(e -> {
-                System.out.println("Testing: CLICKED!");
-            });
-            i++;
-        }
-            
+        
         // ----------- | PAGES | -----------
         StackPane pages = new StackPane();
         
@@ -99,7 +91,7 @@ public class Main extends Application {
         HBox topInfo = new HBox();
         HBox bottomInfo = new HBox();
         VBox infoPage = new VBox(topInfo, bottomInfo);
-
+        
         infoPage.setPadding(new Insets(0, 20, 0, 20));
         infoPage.setSpacing(10);
 
@@ -107,7 +99,7 @@ public class Main extends Application {
         // - student info -
         String currStudentName = currStudent.getName();
         String currStudentId = Integer.toString(currStudent.getId());
-
+        
         Label studentName = new Label(currStudentName);
         Label studentId = new Label("ID: " + currStudentId);
         VBox studentInfo = new VBox(studentName, studentId);
@@ -117,7 +109,7 @@ public class Main extends Application {
         studentInfo.setId("student-info");
         topInfo.setAlignment(Pos.CENTER);
         HBox.setHgrow(studentInfo, Priority.ALWAYS);
-
+        
         // - current academic objective -
         BorderPane currAcademicObj = new BorderPane();
         Label currAcademicLabel = new Label("Current Academic Objective");
@@ -125,22 +117,22 @@ public class Main extends Application {
         Label semStartedLabel = new Label("Started: " + currStudent.getStartingSemester());
         Label gradLabel = new Label("Expected Grad Term: " + currStudent.getExpectedGradSem());
         Label gradStatusLabel = new Label("Graduation Status: " + currStudent.getGradStatus());
-
+        
         currAcademicObj.setTop(currAcademicLabel);
         currAcademicObj.setCenter(new VBox(
             currMajorLabel,
             semStartedLabel,
             gradLabel,
             gradStatusLabel
-        ));
- 
+            ));
+            
         currAcademicObj.getStyleClass().add("info-container");
         currAcademicObj.setPrefHeight(180);
         currAcademicObj.setPrefWidth(350);
         currAcademicLabel.setAlignment(Pos.CENTER);
         currAcademicLabel.setMaxWidth(Double.MAX_VALUE);
         currAcademicLabel.getStyleClass().add("info-label");
-
+        
         HBox.setHgrow(currAcademicObj, Priority.ALWAYS);
         
         currMajorLabel.setMaxWidth(Double.MAX_VALUE);
@@ -154,54 +146,54 @@ public class Main extends Application {
         gradStatusLabel.setAlignment(Pos.CENTER);
         
         topInfo.getChildren().add(currAcademicObj); 
-
+        
         // - course catalog - 
         BorderPane currCourseCatalog = new BorderPane();
         Label currCourseCatalogLabel = new Label("Course Catalogue");
         Label currCourseCatalogValue = new Label(currStudent.getCourseCatalog());
-
+            
         currCourseCatalog.setTop(currCourseCatalogLabel);
         currCourseCatalog.setCenter(new VBox(
             currCourseCatalogValue
-        )); 
-
+            )); 
+            
         currCourseCatalog.getStyleClass().add("info-container");
         currCourseCatalog.setPrefHeight(90);
         currCourseCatalogLabel.setAlignment(Pos.CENTER);
         currCourseCatalogLabel.setMaxWidth(Double.MAX_VALUE);
         currCourseCatalogLabel.getStyleClass().add("info-label");
-
+        
         HBox.setHgrow(currCourseCatalog, Priority.ALWAYS);
 
         currCourseCatalogValue.setMaxWidth(Double.MAX_VALUE);
         currCourseCatalogValue.setAlignment(Pos.CENTER);
         currCourseCatalogValue.setPadding(new Insets(30, 0, 0, 0));
-
+        
         bottomInfo.getChildren().add(currCourseCatalog);
-
+        
         // - current academic summary -
         BorderPane currAcademicSum = new BorderPane();
         Label currAcademicSumLabel = new Label("Current Academic Summary");
         Label currAcademicStandingLabel = new Label("Academic Standing: " + currStudent.getStanding());
         Label overallGPALabel = new Label("Overall GPA: " + currStudent.getGPA());
         Label cppGPALabel = new Label("CPP GPA: " + currStudent.getGPA());
-
+        
         currAcademicSum.setTop(currAcademicSumLabel);
         currAcademicSum.setCenter(new VBox(
             currAcademicStandingLabel,
             overallGPALabel,
             cppGPALabel
-        ));
-
+            ));
+            
         currAcademicSum.getStyleClass().add("info-container");
         currAcademicSum.setPrefHeight(150);
         currAcademicSum.setPrefWidth(400);
         currAcademicSumLabel.setAlignment(Pos.CENTER);
         currAcademicSumLabel.setMaxWidth(Double.MAX_VALUE);
         currAcademicSumLabel.getStyleClass().add("info-label");
-
+        
         HBox.setHgrow(currAcademicSum, Priority.ALWAYS);
-
+        
         currAcademicStandingLabel.setAlignment(Pos.CENTER);
         currAcademicStandingLabel.setMaxWidth(Double.MAX_VALUE);
         currAcademicStandingLabel.setPadding(new Insets(10, 0, 0, 0));
@@ -209,10 +201,10 @@ public class Main extends Application {
         overallGPALabel.setMaxWidth(Double.MAX_VALUE);
         cppGPALabel.setAlignment(Pos.CENTER);
         cppGPALabel.setMaxWidth(Double.MAX_VALUE);
-
+        
         bottomInfo.getChildren().add(currAcademicSum);
         bottomInfo.setSpacing(10);
-
+        
         // add pages to their parent node
         pages.getChildren().addAll(infoPage);
         
@@ -224,7 +216,16 @@ public class Main extends Application {
         
         // ----------- | Tab Switching Logic | -------------
         infoPage.setVisible(true); // use this function when switching pages
-
+        int i = 0;
+        // CONFIGURE
+        for (Node child : navBar.getChildren()) {
+            child.setOnMouseClicked(e -> {
+                System.out.println("Testing: CLICKED!");
+            });
+            i++;
+        }
+            
+        // Instantiate the Scene
         Scene scene = new Scene(root, 1250, 600);
         scene.getStylesheets().add(getClass().getResource("styles.css").toExternalForm());
         stage.setScene(scene);

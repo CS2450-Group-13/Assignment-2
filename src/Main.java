@@ -215,7 +215,6 @@ public class Main extends Application {
 
         // add pages to their parent node
         pages.getChildren().addAll(infoPage);
-        infoPage.setVisible(true); // use this function when switching pages
         
         // ----------- | ROOT | -----------
         // instantiate root node and layout
@@ -223,6 +222,9 @@ public class Main extends Application {
         root.setTop(header);
         root.setCenter(pages);
         
+        // ----------- | Tab Switching Logic | -------------
+        infoPage.setVisible(true); // use this function when switching pages
+
         Scene scene = new Scene(root, 1250, 600);
         scene.getStylesheets().add(getClass().getResource("styles.css").toExternalForm());
         stage.setScene(scene);

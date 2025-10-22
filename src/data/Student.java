@@ -4,7 +4,7 @@ public class Student {
     private String name;
     private int id;
     private String semStarted; // format Fall/Spring Semester [Year]
-    private String expectedGradSem;
+    private String expectedGradSem; // format Fall/Spring Semester [Year]
     private boolean isUndergrad;
     private Major major;
     private boolean gradStatus;
@@ -16,7 +16,8 @@ public class Student {
         String semStarted,
         String expectedGradSem,
         boolean isUndergrad,
-        boolean gradStatus
+        boolean gradStatus,
+        double gpa
         ) {
 
         this.name = name;
@@ -26,6 +27,7 @@ public class Student {
         this.expectedGradSem = expectedGradSem;
         this.isUndergrad = isUndergrad;
         this.gradStatus = gradStatus;
+        this.gpa = gpa;
     }
 
     public String getName() {
@@ -68,6 +70,13 @@ public class Student {
 
     public String getGradStatus() {
         return (gradStatus) ? "Applied" : "Not Applied";
+    }
+
+    public String getCourseCatalog() {
+        String[] parts = semStarted.split(" ");
+        int startYear = Integer.parseInt(parts[parts.length - 1]);
+        int endYear = startYear + 1;
+        return startYear + " to " + endYear + " {Semester}";
     }
 
     public void setMajor(Major major) {

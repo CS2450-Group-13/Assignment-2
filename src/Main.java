@@ -27,7 +27,7 @@ public class Main extends Application {
     
     @Override
     public void start(Stage stage) throws Exception {
-        int studentChoice = 2; // Change student 0-2
+        int studentChoice = 1; // Change student 0-2
 
         // initialize data
         initializeCourses();
@@ -100,6 +100,9 @@ public class Main extends Application {
         HBox bottomInfo = new HBox();
         VBox infoPage = new VBox(topInfo, bottomInfo);
 
+        infoPage.setPadding(new Insets(0, 20, 0, 20));
+        infoPage.setSpacing(10);
+
         // sections
         // - student info -
         String currStudentName = currStudent.getName();
@@ -116,32 +119,30 @@ public class Main extends Application {
         HBox.setHgrow(studentInfo, Priority.ALWAYS);
 
         // - current academic objective -
-        Major currStudentMajor = currStudent.getMajor();
-        BorderPane currentAcademicObj = new BorderPane();
+        BorderPane currAcademicObj = new BorderPane();
         Label currAcademicLabel = new Label("Current Academic Objective");
-        Label currMajorLabel = new Label(currStudentMajor.toString() + ", " + currStudent.getUndergradStatus());
+        Label currMajorLabel = new Label(currMajor.toString() + ", " + currStudent.getUndergradStatus());
         Label semStartedLabel = new Label("Started: " + currStudent.getStartingSemester());
         Label gradLabel = new Label("Expected Grad Term: " + currStudent.getExpectedGradSem());
-        Label gradStatus = new Label("Graduation Status: " + currStudent.getGradStatus());
+        Label gradStatusLabel = new Label("Graduation Status: " + currStudent.getGradStatus());
 
-        currentAcademicObj.setTop(currAcademicLabel);
-        currentAcademicObj.setCenter(new VBox(
+        currAcademicObj.setTop(currAcademicLabel);
+        currAcademicObj.setCenter(new VBox(
             currMajorLabel,
             semStartedLabel,
             gradLabel,
-            gradStatus
+            gradStatusLabel
         ));
  
-        currentAcademicObj.getStyleClass().add("info-container");
-        currentAcademicObj.setPrefHeight(180);
-        currentAcademicObj.setPrefWidth(400);
+        currAcademicObj.getStyleClass().add("info-container");
+        currAcademicObj.setPrefHeight(180);
+        currAcademicObj.setPrefWidth(350);
         currAcademicLabel.setAlignment(Pos.CENTER);
         currAcademicLabel.setMaxWidth(Double.MAX_VALUE);
         currAcademicLabel.getStyleClass().add("info-label");
 
-        topInfo.getChildren().add(currentAcademicObj);
-        HBox.setHgrow(currentAcademicObj, Priority.ALWAYS);
-
+        HBox.setHgrow(currAcademicObj, Priority.ALWAYS);
+        
         currMajorLabel.setMaxWidth(Double.MAX_VALUE);
         currMajorLabel.setAlignment(Pos.CENTER);
         currMajorLabel.setPadding(new Insets(8, 0, 0, 0));
@@ -149,14 +150,68 @@ public class Main extends Application {
         semStartedLabel.setAlignment(Pos.CENTER);
         gradLabel.setMaxWidth(Double.MAX_VALUE);
         gradLabel.setAlignment(Pos.CENTER);
-        gradStatus.setMaxWidth(Double.MAX_VALUE);
-        gradStatus.setAlignment(Pos.CENTER);
-
-        // - current academic summary -
+        gradStatusLabel.setMaxWidth(Double.MAX_VALUE);
+        gradStatusLabel.setAlignment(Pos.CENTER);
+        
+        topInfo.getChildren().add(currAcademicObj); 
 
         // - course catalog - 
+        BorderPane currCourseCatalog = new BorderPane();
+        Label currCourseCatalogLabel = new Label("Course Catalogue");
+        Label currCourseCatalogValue = new Label(currStudent.getCourseCatalog());
 
-        infoPage.setPadding(new Insets(0, 20, 0, 20));
+        currCourseCatalog.setTop(currCourseCatalogLabel);
+        currCourseCatalog.setCenter(new VBox(
+            currCourseCatalogValue
+        )); 
+
+        currCourseCatalog.getStyleClass().add("info-container");
+        currCourseCatalog.setPrefHeight(90);
+        currCourseCatalogLabel.setAlignment(Pos.CENTER);
+        currCourseCatalogLabel.setMaxWidth(Double.MAX_VALUE);
+        currCourseCatalogLabel.getStyleClass().add("info-label");
+
+        HBox.setHgrow(currCourseCatalog, Priority.ALWAYS);
+
+        currCourseCatalogValue.setMaxWidth(Double.MAX_VALUE);
+        currCourseCatalogValue.setAlignment(Pos.CENTER);
+        currCourseCatalogValue.setPadding(new Insets(30, 0, 0, 0));
+
+        bottomInfo.getChildren().add(currCourseCatalog);
+
+        // - current academic summary -
+        BorderPane currAcademicSum = new BorderPane();
+        Label currAcademicSumLabel = new Label("Current Academic Summary");
+        Label currAcademicStandingLabel = new Label("Academic Standing: " + currStudent.getStanding());
+        Label overallGPALabel = new Label("Overall GPA: " + currStudent.getGPA());
+        Label cppGPALabel = new Label("CPP GPA: " + currStudent.getGPA());
+
+        currAcademicSum.setTop(currAcademicSumLabel);
+        currAcademicSum.setCenter(new VBox(
+            currAcademicStandingLabel,
+            overallGPALabel,
+            cppGPALabel
+        ));
+
+        currAcademicSum.getStyleClass().add("info-container");
+        currAcademicSum.setPrefHeight(150);
+        currAcademicSum.setPrefWidth(400);
+        currAcademicSumLabel.setAlignment(Pos.CENTER);
+        currAcademicSumLabel.setMaxWidth(Double.MAX_VALUE);
+        currAcademicSumLabel.getStyleClass().add("info-label");
+
+        HBox.setHgrow(currAcademicSum, Priority.ALWAYS);
+
+        currAcademicStandingLabel.setAlignment(Pos.CENTER);
+        currAcademicStandingLabel.setMaxWidth(Double.MAX_VALUE);
+        currAcademicStandingLabel.setPadding(new Insets(10, 0, 0, 0));
+        overallGPALabel.setAlignment(Pos.CENTER);
+        overallGPALabel.setMaxWidth(Double.MAX_VALUE);
+        cppGPALabel.setAlignment(Pos.CENTER);
+        cppGPALabel.setMaxWidth(Double.MAX_VALUE);
+
+        bottomInfo.getChildren().add(currAcademicSum);
+        bottomInfo.setSpacing(10);
 
         // add pages to their parent node
         pages.getChildren().addAll(infoPage);
@@ -223,7 +278,8 @@ public class Main extends Application {
             "Fall Semester 2022",
             "Spring Semester 2026",
             true,
-            true
+            true,
+            2.5
         );
 
         Student Bryce = new Student(
@@ -232,7 +288,8 @@ public class Main extends Application {
             "Fall Semester 2023",
             "Spring Semester 2027",
             true,
-            false
+            false,
+            3.9
         );
 
         Student Yelena = new Student(
@@ -241,7 +298,8 @@ public class Main extends Application {
             "Fall Semester 2024",
             "Spring Semester 2026",
             false,
-            false
+            false,
+            1.8
         );
 
         allStudents.add(Alice);

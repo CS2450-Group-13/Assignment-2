@@ -65,14 +65,14 @@ public class Main extends Application {
         Label genEdLabel = new Label("General Education");
         Label majorCoursesLabel = new Label("Major Courses");
         Label majorElecLabel = new Label("Major Electives");
-        Label catalogueLabel = new Label("Course Catalogue");
+        Label catalogLabel = new Label("Course Catalog");
         
         navBar.getChildren().addAll(
             infoLabel, 
             genEdLabel, 
             majorCoursesLabel,
             majorElecLabel,
-            catalogueLabel
+            catalogLabel
             );
             
         navBar.setSpacing(90);
@@ -215,15 +215,25 @@ public class Main extends Application {
         root.setCenter(pages);
         
         // ----------- | Tab Switching Logic | -------------
+        
+        // default page
         infoPage.setVisible(true); // use this function when switching pages
-        int i = 0;
-        // CONFIGURE
-        for (Node child : navBar.getChildren()) {
-            child.setOnMouseClicked(e -> {
-                System.out.println("Testing: CLICKED!");
-            });
-            i++;
-        }
+
+        infoLabel.setOnMouseClicked(e -> {
+            infoPage.setVisible(true);
+        });
+        genEdLabel.setOnMouseClicked(e -> {
+            infoPage.setVisible(false);
+        });
+        majorCoursesLabel.setOnMouseClicked(e -> {
+            infoPage.setVisible(false);
+        });
+        majorElecLabel.setOnMouseClicked(e -> {
+            infoPage.setVisible(false);
+        });
+        catalogLabel.setOnMouseClicked(e -> {
+            infoPage.setVisible(false);
+        });
             
         // Instantiate the Scene
         Scene scene = new Scene(root, 1250, 600);

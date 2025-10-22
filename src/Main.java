@@ -27,14 +27,28 @@ public class Main extends Application {
     
     @Override
     public void start(Stage stage) throws Exception {
+        int studentChoice = 2; // Change student 0-2
+
         // initialize data
         initializeCourses();
         initializeMajors();
         initializeStudents();
 
+        
         Student currStudent = allStudents.get(0);
         Major currMajor = allMajors.get(0);
+
+        if (studentChoice == 1) {
+            currStudent = allStudents.get(1);
+            currMajor = allMajors.get(1);
+        } else if (studentChoice == 2) {
+            currStudent = allStudents.get(2);
+            currMajor = allMajors.get(0);
+        }
+
         currStudent.setMajor(currMajor);
+
+        // ******************** UI FUNCTIONALITY ********************
 
         // ----------- | NAV BAR | -----------
         // title of app
@@ -218,11 +232,21 @@ public class Main extends Application {
             "Fall Semester 2023",
             "Spring Semester 2027",
             true,
-            true
+            false
+        );
+
+        Student Yelena = new Student(
+            "Yelena Belova",
+            607000607,
+            "Fall Semester 2024",
+            "Spring Semester 2026",
+            false,
+            false
         );
 
         allStudents.add(Alice);
         allStudents.add(Bryce);
+        allStudents.add(Yelena);
     }
 
     public static void main(String[] args) {

@@ -215,7 +215,7 @@ public class Main extends Application {
         root.setCenter(pages);
         
         // ----------- | Tab Switching Logic | -------------
-        
+
         // default page
         infoPage.setVisible(true); // use this function when switching pages
 
@@ -322,28 +322,6 @@ public class Main extends Application {
     }
 
     public static void main(String[] args) {
-
-        // Test code
-        // Course course1 = new Course(
-        //     "CS", 
-        //     CourseCategory.MAJOR,
-        //     1400,
-        //     "Intro to Programming",
-        //     3 
-        //     );
-        // List<Course> course1Prerequisites = new ArrayList<>();
-        // course1Prerequisites.add(course1);
-        // Course course2 = new Course(
-        //     "CS", 
-        //     CourseCategory.MAJOR_ELECTIVE,
-        //     2450, 
-        //     "UI/UX Design", 
-        //     3, 
-        //     course1Prerequisites
-        //     );
-        // System.out.println(course2);
-        // System.out.println(course2.getPrerequisites());
-        // System.out.println(course2.getCourseCategory());
         launch(args);
     }
 }

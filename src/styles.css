@@ -1,13 +1,42 @@
 #app-title {
-    -fx-font-size: 24px;
+    -fx-font-size: 32px;
     -fx-font-weight: bold;
-    font-size: 24px;
+    font-size: 32px;
     font-weight: bold;
 }
 
 .nav-bar-item {
     -fx-font-size: 18px;
     -fx-font-weight: bold;
+    -fx-cursor: hand;
     font-size: 18px;
+    font-weight: bold;
+    cursor: hand;
+}
+
+#student-info {
+    -fx-font-size: 20px;
+    font-size: 20px;
+}
+
+.info-container {
+    -fx-border-color: black;
+    -fx-border-width: 2;
+    -fx-border-radius: 1;
+    -fx-border-style: solid;
+    -fx-font-size: 20px;
+    border-color: black;
+    border-width: 2;
+    border-radius: 1;
+    border-style: solid;
+    font-size: 20px;
+}
+
+.info-label {
+    -fx-border-color: transparent transparent black transparent;
+    -fx-border-width: 0 0 1 0;
+    -fx-font-weight: bold;
+    border-color: transparent transparent black transparent;
+    border-width: 0 0 1 0;
     font-weight: bold;
 }

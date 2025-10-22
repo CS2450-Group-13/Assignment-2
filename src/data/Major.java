@@ -34,4 +34,9 @@ public class Major {
         courses.add(course);
     }
 
+    @Override
+    public String toString() {
+        return name;
+    }
+
 }

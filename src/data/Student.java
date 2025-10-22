@@ -15,7 +15,6 @@ public class Student {
         String semStarted,
         String expectedGradSem,
         boolean isUndergrad,
-        Major major,
         boolean gradStatus
         ) {
 
@@ -25,7 +24,6 @@ public class Student {
         this.semStarted = semStarted;
         this.expectedGradSem = expectedGradSem;
         this.isUndergrad = isUndergrad;
-        this.major = major;
         this.gradStatus = gradStatus;
     }
 
@@ -55,5 +53,9 @@ public class Student {
 
     public String getGradStatus() {
         return (gradStatus) ? "Applied" : "Not Applied";
+    }
+
+    public void setMajor(Major major) {
+        this.major = major;
     }
 }

@@ -37,6 +37,9 @@ public class Course {
     public String getName() {
         return name;
     }
+    public String getCourseMajor() {
+        return courseMajor;
+    }
 
     public int getCourseId() {
         return courseId;

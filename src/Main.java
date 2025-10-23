@@ -503,6 +503,7 @@ pages.getChildren().addAll(infoPage, majorCoursesPage,majorElectivesPage);
 
         // default page
         infoPage.setVisible(true); 
+
         majorCoursesPage.setVisible(false);
         majorElectivesPage.setVisible(false);
 

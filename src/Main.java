@@ -65,7 +65,7 @@ public class Main extends Application {
         ));
 
         java.util.List<Course> electiveCourses = currMajor.getElectives();
-        
+
         java.util.Set<Integer> completedCourseIds = new java.util.HashSet<>();
 
         completedCourseIds.add(1400); 
@@ -88,7 +88,7 @@ public class Main extends Application {
         Label genEdLabel = new Label("General Education");
         Label majorCoursesLabel = new Label("Major Courses");
         Label majorElecLabel = new Label("Major Electives");
-        Label catalogLabel = new Label("Course Catalog");
+        Label catalogLabel = new Label("GE Course Catalog");
         
         navBar.getChildren().addAll(
             infoLabel, 
@@ -176,9 +176,7 @@ public class Main extends Application {
         Label currCourseCatalogValue = new Label(currStudent.getCourseCatalog());
             
         currCourseCatalog.setTop(currCourseCatalogLabel);
-        currCourseCatalog.setCenter(new VBox(
-            currCourseCatalogValue
-            )); 
+        currCourseCatalog.setCenter(new VBox(currCourseCatalogValue)); 
             
         currCourseCatalog.getStyleClass().add("info-container");
         currCourseCatalog.setPrefHeight(90);
@@ -206,7 +204,7 @@ public class Main extends Application {
             currAcademicStandingLabel,
             overallGPALabel,
             cppGPALabel
-            ));
+        ));
             
         currAcademicSum.getStyleClass().add("info-container");
         currAcademicSum.setPrefHeight(150);
@@ -228,7 +226,7 @@ public class Main extends Application {
         bottomInfo.getChildren().add(currAcademicSum);
         bottomInfo.setSpacing(10);
         
-        // Major Courses Page
+        // ## Major Courses Page
         VBox majorCoursesPage = new VBox();
         majorCoursesPage.setPadding(new Insets(10, 20, 10, 20));
         majorCoursesPage.setSpacing(8);
@@ -344,90 +342,89 @@ public class Main extends Application {
                     } else {
                         statusDot.setText("■");
                         statusDot.setStyle("-fx-text-fill: #d32f2f; -fx-font-size: 15px;");
-                }
+                    }
 
-                setGraphic(row);
-            } else {
-                if (item.endsWith(":")) {
-                    setStyle("-fx-font-weight: bold;"); 
+                    setGraphic(row);
+                } else {
+                    if (item.endsWith(":")) {
+                        setStyle("-fx-font-weight: bold;"); 
+                    }
+                    setText(item);
                 }
-                setText(item);
             }
-        }
-    });
+        });
 
 
-    /////////////////////////////////////////////////////////////// 
+        /////////////////////////////////////////////////////////////// 
+        
+        majorCoursesPage.setSpacing(16);
+        majorCoursesPage.getChildren().addAll(majorCoursesHeader, courseTree);
+
+        // ##Major Electives Page
+        VBox majorElectivesPage = new VBox();
+        majorElectivesPage.setPadding(new Insets(10, 20, 10, 20));
+        majorElectivesPage.setSpacing(8);
+
+        Label majorElectivesHeader = new Label("Major Electives");
+        majorElectivesHeader.getStyleClass().add("info-label");
+
+        // TreeView for electives
+        TreeView<String> electiveTree = new TreeView<>();
+        electiveTree.setShowRoot(false);
+        TreeItem<String> electRoot = new TreeItem<>("Electives");
+        electiveTree.setRoot(electRoot);
+
+
+        Map<Integer, Course> electById = new HashMap<>();
+        Map<Integer, TreeItem<String>> electNodes = new HashMap<>();
+        Map<TreeItem<String>, Course> electNodeToCourse = new HashMap<>();
+
+        if (!electiveCourses.isEmpty()) {
     
-    majorCoursesPage.setSpacing(16);
-    majorCoursesPage.getChildren().addAll(majorCoursesHeader, courseTree);
-
-    // Major Electives Page
-    VBox majorElectivesPage = new VBox();
-    majorElectivesPage.setPadding(new Insets(10, 20, 10, 20));
-    majorElectivesPage.setSpacing(8);
-
-    Label majorElectivesHeader = new Label("Major Electives");
-    majorElectivesHeader.getStyleClass().add("info-label");
-
-    // TreeView for electives
-    TreeView<String> electiveTree = new TreeView<>();
-    electiveTree.setShowRoot(false);
-    TreeItem<String> electRoot = new TreeItem<>("Electives");
-    electiveTree.setRoot(electRoot);
-
-
-    Map<Integer, Course> electById = new HashMap<>();
-    Map<Integer, TreeItem<String>> electNodes = new HashMap<>();
-    Map<TreeItem<String>, Course> electNodeToCourse = new HashMap<>();
-
-    if (!electiveCourses.isEmpty()) {
-    
-        for (Course c : electiveCourses) {
-            String label = String.format("%s - %s (%d units)",
-                c.toString(), c.getCourseCategory().getDisplayName(), c.getUnits());
-            TreeItem<String> item = new TreeItem<>(label);
-            electRoot.getChildren().add(item);
-            electById.put(c.getCourseId(), c);
-            electNodes.put(c.getCourseId(), item);
-            electNodeToCourse.put(item, c);
-        }
-
-        for (Course c : electiveCourses) {
-            TreeItem<String> parent = electNodes.get(c.getCourseId());
-
-            if (!c.getPrerequisites().isEmpty()) {
-                TreeItem<String> prereqs = new TreeItem<>("Prerequisites:");
-                for (Course p : c.getPrerequisites()) {
-                    prereqs.getChildren().add(new TreeItem<>(p.toString()));
-                }
-                parent.getChildren().add(prereqs);
+            for (Course c : electiveCourses) {
+                String label = String.format("%s - %s (%d units)",
+                    c.toString(), c.getCourseCategory().getDisplayName(), c.getUnits());
+                TreeItem<String> item = new TreeItem<>(label);
+                electRoot.getChildren().add(item);
+                electById.put(c.getCourseId(), c);
+                electNodes.put(c.getCourseId(), item);
+                electNodeToCourse.put(item, c);
             }
 
-            List<Course> dependents = electiveCourses.stream()
-                .filter(other -> other.getPrerequisites().contains(c))
-                .collect(Collectors.toList());
-            if (!dependents.isEmpty()) {
-                TreeItem<String> deps = new TreeItem<>("Required for:");
-                for (Course d : dependents) {
-                    deps.getChildren().add(new TreeItem<>(d.toString()));
+            for (Course c : electiveCourses) {
+                TreeItem<String> parent = electNodes.get(c.getCourseId());
+
+                if (!c.getPrerequisites().isEmpty()) {
+                    TreeItem<String> prereqs = new TreeItem<>("Prerequisites:");
+                    for (Course p : c.getPrerequisites()) {
+                        prereqs.getChildren().add(new TreeItem<>(p.toString()));
+                    }
+                    parent.getChildren().add(prereqs);
                 }
-                parent.getChildren().add(deps);
+
+                List<Course> dependents = electiveCourses.stream()
+                    .filter(other -> other.getPrerequisites().contains(c))
+                    .collect(Collectors.toList());
+                if (!dependents.isEmpty()) {
+                    TreeItem<String> deps = new TreeItem<>("Required for:");
+                    for (Course d : dependents) {
+                        deps.getChildren().add(new TreeItem<>(d.toString()));
+                    }
+                    parent.getChildren().add(deps);
+                }
             }
+        } else {
+            electRoot.getChildren().add(new TreeItem<>("No electives found."));
         }
-    }
-     else {
-        electRoot.getChildren().add(new TreeItem<>("No electives found."));
-    }
 
-    electiveTree.setPrefHeight(450);
-    electiveTree.setStyle("""
-    -fx-font-size: 14px;
-    -fx-background-color: white;
-    """);
+        electiveTree.setPrefHeight(450);
+        electiveTree.setStyle("""
+        -fx-font-size: 14px;
+        -fx-background-color: white;
+        """);
 
-    // ===== Cell factory: same status UI as Major Courses =====
-    electiveTree.setCellFactory(tv -> new TreeCell<String>() {
+        // ===== Cell factory: same status UI as Major Courses =====
+        electiveTree.setCellFactory(tv -> new TreeCell<String>() {
 
         // Row: [text] ---spacer---> [statusSquare]
         private final HBox row = new HBox();
@@ -463,30 +460,30 @@ public class Main extends Application {
             TreeItem<String> ti = getTreeItem();
             boolean isTopLevel = (ti != null && ti.getParent() == electRoot);
 
-            if (isTopLevel) {
-                Course course = electNodeToCourse.get(ti);
-                boolean completed = (course != null && completedCourseIds.contains(course.getCourseId()));
+                if (isTopLevel) {
+                    Course course = electNodeToCourse.get(ti);
+                    boolean completed = (course != null && completedCourseIds.contains(course.getCourseId()));
 
-                textLbl.setStyle("-fx-font-weight: bold;");
+                    textLbl.setStyle("-fx-font-weight: bold;");
 
-                if (completed) {
-                    row.setStyle("-fx-background-color: #e6ffe6; -fx-background-radius: 6;");
-                    statusSquare.setStyle("-fx-background-color: transparent;");
+                    if (completed) {
+                        row.setStyle("-fx-background-color: #e6ffe6; -fx-background-radius: 6;");
+                        statusSquare.setStyle("-fx-background-color: transparent;");
+                    } else {
+                        statusSquare.setStyle("-fx-background-color: #d32f2f; -fx-background-radius: 2;");
+                    }
+                    
+                    setGraphic(row);
                 } else {
-                    statusSquare.setStyle("-fx-background-color: #d32f2f; -fx-background-radius: 2;");
+                    if (item.endsWith(":")) setStyle("-fx-font-weight: bold;");
+                    setText(item);
                 }
-                
-                setGraphic(row);
-            } else {
-                if (item.endsWith(":")) setStyle("-fx-font-weight: bold;");
-                setText(item);
             }
-        }
-    });
+        });
 
-    majorElectivesPage.setSpacing(16);
-    majorElectivesPage.getChildren().addAll(majorElectivesHeader, electiveTree);
-    pages.getChildren().addAll(infoPage, majorCoursesPage,majorElectivesPage);
+        majorElectivesPage.setSpacing(16);
+        majorElectivesPage.getChildren().addAll(majorElectivesHeader, electiveTree);
+        pages.getChildren().addAll(infoPage, majorCoursesPage,majorElectivesPage);
 
 
 

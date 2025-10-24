@@ -29,6 +29,27 @@ public class Major {
         return name;
     }
 
+    public int getTotalUnits() {
+        int totalUnits = 0;
+
+        for (Course c : courses) {
+            totalUnits += c.getUnits();
+        }
+        totalUnits += 17;
+
+        return totalUnits;
+    }
+
+    public int getMajorRequiredUnits() {
+        int totalUnits = 0;
+
+        for (Course c : courses) {
+            totalUnits += c.getUnits();
+        }
+
+        return totalUnits;
+    }
+
     public List<Course> getCourses() {
         return courses;
     }

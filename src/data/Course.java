@@ -10,6 +10,7 @@ public class Course {
     private int courseNum;
     private int courseId;
     private int units;
+    private int group = 0;
     private CourseCategory category;
     private List<Course> prerequisites;
     Random random = new Random();
@@ -76,6 +77,14 @@ public class Course {
     @Override
     public String toString() {
         return courseMajor + courseNum + " " + name;
+    }
+
+    public void setGroup(int group) {
+        this.group = group;
+    }
+
+    public int getGroup() {
+        return group;
     }
 
 }

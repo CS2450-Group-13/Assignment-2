@@ -30,6 +30,7 @@ public class Main extends Application {
 
     private final List<Course> allCsCourses = new ArrayList<>();
     private final List<Course> allCsElectives = new ArrayList<>();
+    private final List<Course> allGeCourses = new ArrayList<>();
     private final List<Major> allMajors = new ArrayList<>();
     private final List<Student> allStudents = new ArrayList<>();
 
@@ -58,14 +59,7 @@ public class Main extends Application {
             currStudent.setMajor(currMajor);
         }
 
-
-        java.util.Set<Integer> electiveIds = new java.util.HashSet<>(java.util.Arrays.asList(
-        3520, 3700, 3800, 4110, 4200, 4210, 4220, 4230, 4250, 4350,
-        4440, 4450, 4500, 4600, 4650, 4651, 4680, 4700, 4750, 4810, 4990
-        ));
-
         java.util.List<Course> electiveCourses = currMajor.getElectives();
-
         java.util.Set<Integer> completedCourseIds = new java.util.HashSet<>();
 
         completedCourseIds.add(1400); 
@@ -96,7 +90,7 @@ public class Main extends Application {
             majorCoursesLabel,
             majorElecLabel,
             catalogLabel
-            );
+        );
             
         navBar.setSpacing(90);
         navBar.setAlignment(Pos.CENTER);
@@ -122,10 +116,21 @@ public class Main extends Application {
         // - student info -
         String currStudentName = currStudent.getName();
         String currStudentId = Integer.toString(currStudent.getId());
+        int currMajorUnits = currMajor.getTotalUnits();
+        int currStudentCompletedUnits = currStudent.getCompletedUnits();
         
         Label studentName = new Label(currStudentName);
         Label studentId = new Label("ID: " + currStudentId);
-        VBox studentInfo = new VBox(studentName, studentId);
+        Label completedUnits = new Label("Completed Units: " + currStudentCompletedUnits);
+        Label requiredUnits = new Label("Required: " + currMajorUnits);
+        Label remainingUnits = new Label("Left: " + (currMajorUnits - currStudentCompletedUnits));
+        VBox studentInfo = new VBox(
+            studentName, 
+            studentId,
+            completedUnits,
+            requiredUnits,
+            remainingUnits
+        );
         topInfo.getChildren().add(studentInfo);
         
         studentInfo.setAlignment(Pos.CENTER);
@@ -147,7 +152,7 @@ public class Main extends Application {
             semStartedLabel,
             gradLabel,
             gradStatusLabel
-            ));
+        ));
             
         currAcademicObj.getStyleClass().add("info-container");
         currAcademicObj.setPrefHeight(180);
@@ -231,7 +236,7 @@ public class Main extends Application {
         majorCoursesPage.setPadding(new Insets(10, 20, 10, 20));
         majorCoursesPage.setSpacing(8);
 
-        Label majorCoursesHeader = new Label("Major Courses");
+        Label majorCoursesHeader = new Label("Major Required: " + currMajor.getMajorRequiredUnits() + " units");
         majorCoursesHeader.getStyleClass().add("info-label");
         
         // Create TreeView for expandable course information
@@ -290,7 +295,7 @@ public class Main extends Application {
             rootItem.getChildren().add(new TreeItem<>("No courses available for this major."));
         }
         
-        courseTree.setPrefHeight(450);
+        courseTree.setPrefHeight(700);
         courseTree.setStyle("""
             -fx-font-size: 14px;
             -fx-background-color: white;
@@ -365,10 +370,12 @@ public class Main extends Application {
         majorElectivesPage.setPadding(new Insets(10, 20, 10, 20));
         majorElectivesPage.setSpacing(8);
 
-        Label majorElectivesHeader = new Label("Major Electives");
+        Label majorElectivesHeader = new Label("Major Electives: 17 Units");
+        Label electivesGroup1 = new Label(" At least 11 units from:");
+        Label electivesGroup2 = new Label(" No more than 6 units from:");
         majorElectivesHeader.getStyleClass().add("info-label");
 
-        // TreeView for electives
+        // TreeView for electives group 1
         TreeView<String> electiveTree = new TreeView<>();
         electiveTree.setShowRoot(false);
         TreeItem<String> electRoot = new TreeItem<>("Electives");
@@ -382,6 +389,9 @@ public class Main extends Application {
         if (!electiveCourses.isEmpty()) {
     
             for (Course c : electiveCourses) {
+                if (c.getGroup() == 2) 
+                    continue;
+
                 String label = String.format("%s - %s (%d units)",
                     c.toString(), c.getCourseCategory().getDisplayName(), c.getUnits());
                 TreeItem<String> item = new TreeItem<>(label);
@@ -392,6 +402,9 @@ public class Main extends Application {
             }
 
             for (Course c : electiveCourses) {
+                if (c.getGroup() == 2)
+                    continue;
+
                 TreeItem<String> parent = electNodes.get(c.getCourseId());
 
                 if (!c.getPrerequisites().isEmpty()) {
@@ -417,7 +430,7 @@ public class Main extends Application {
             electRoot.getChildren().add(new TreeItem<>("No electives found."));
         }
 
-        electiveTree.setPrefHeight(450);
+        electiveTree.setPrefHeight(635);
         electiveTree.setStyle("""
         -fx-font-size: 14px;
         -fx-background-color: white;
@@ -481,9 +494,135 @@ public class Main extends Application {
             }
         });
 
+        // TreeView for electives group 2
+        TreeView<String> electiveTree2 = new TreeView<>();
+        electiveTree2.setShowRoot(false);
+        TreeItem<String> electRoot2 = new TreeItem<>("Electives");
+        electiveTree2.setRoot(electRoot2);
+
+
+        Map<Integer, Course> electById2 = new HashMap<>();
+        Map<Integer, TreeItem<String>> electNodes2 = new HashMap<>();
+        Map<TreeItem<String>, Course> electNodeToCourse2 = new HashMap<>();
+
+        if (!electiveCourses.isEmpty()) {
+
+            for (Course c : electiveCourses) {
+                if (c.getGroup() != 2) 
+                    continue;
+
+                String label = String.format("%s - %s (%d units)",
+                    c.toString(), c.getCourseCategory().getDisplayName(), c.getUnits());
+                TreeItem<String> item = new TreeItem<>(label);
+                electRoot2.getChildren().add(item);
+                electById2.put(c.getCourseId(), c);
+                electNodes2.put(c.getCourseId(), item);
+                electNodeToCourse2.put(item, c);
+            }
+
+            for (Course c : electiveCourses) {
+                if (c.getGroup() != 2)
+                    continue;
+
+                TreeItem<String> parent = electNodes2.get(c.getCourseId());
+
+                if (!c.getPrerequisites().isEmpty()) {
+                    TreeItem<String> prereqs = new TreeItem<>("Prerequisites:");
+                    for (Course p : c.getPrerequisites()) {
+                        prereqs.getChildren().add(new TreeItem<>(p.toString()));
+                    }
+                    parent.getChildren().add(prereqs);
+                }
+
+                List<Course> dependents = electiveCourses.stream()
+                    .filter(other -> other.getPrerequisites().contains(c))
+                    .collect(Collectors.toList());
+                if (!dependents.isEmpty()) {
+                    TreeItem<String> deps = new TreeItem<>("Required for:");
+                    for (Course d : dependents) {
+                        deps.getChildren().add(new TreeItem<>(d.toString()));
+                    }
+                    parent.getChildren().add(deps);
+                }
+            }
+        } else {
+            electRoot2.getChildren().add(new TreeItem<>("No electives found."));
+        }
+
+        electiveTree2.setPrefHeight(475);
+        electiveTree2.setStyle("""
+        -fx-font-size: 14px;
+        -fx-background-color: white;
+        """);
+
+        // ===== Cell factory 2: same status UI as Major Courses =====
+        electiveTree2.setCellFactory(tv -> new TreeCell<String>() {
+
+        // Row: [text] ---spacer---> [statusSquare]
+        private final HBox row = new HBox();
+        private final Label textLbl = new Label();
+        private final Region spacer = new Region();
+        private final Region statusSquare = new Region(); 
+
+        {
+            HBox.setHgrow(spacer, Priority.ALWAYS);
+            row.setAlignment(Pos.CENTER_LEFT);
+            row.setSpacing(8);
+            statusSquare.setMinSize(12, 12);
+            statusSquare.setPrefSize(12, 12);
+            statusSquare.setMaxSize(12, 12);
+            row.getChildren().addAll(textLbl, spacer, statusSquare);
+        }
+
+        @Override
+        protected void updateItem(String item, boolean empty) {
+            super.updateItem(item, empty);
+
+            setText(null);
+            setGraphic(null);
+            setStyle("");
+            row.setStyle("");
+            textLbl.setText("");
+            textLbl.setStyle("");
+            statusSquare.setStyle("-fx-background-color: transparent;");
+
+            if (empty || item == null) return;
+
+            textLbl.setText(item);
+            TreeItem<String> ti = getTreeItem();
+            boolean isTopLevel = (ti != null && ti.getParent() == electRoot2);
+
+                if (isTopLevel) {
+                    Course course = electNodeToCourse2.get(ti);
+                    boolean completed = (course != null && completedCourseIds.contains(course.getCourseId()));
+
+                    textLbl.setStyle("-fx-font-weight: bold;");
+
+                    if (completed) {
+                        row.setStyle("-fx-background-color: #e6ffe6; -fx-background-radius: 6;");
+                        statusSquare.setStyle("-fx-background-color: transparent;");
+                    } else {
+                        statusSquare.setStyle("-fx-background-color: #d32f2f; -fx-background-radius: 2;");
+                    }
+                    
+                    setGraphic(row);
+                } else {
+                    if (item.endsWith(":")) setStyle("-fx-font-weight: bold;");
+                    setText(item);
+                }
+            }
+        });
+
         majorElectivesPage.setSpacing(16);
-        majorElectivesPage.getChildren().addAll(majorElectivesHeader, electiveTree);
-        pages.getChildren().addAll(infoPage, majorCoursesPage,majorElectivesPage);
+        majorElectivesPage.getChildren().addAll(
+            majorElectivesHeader, 
+            electivesGroup1, 
+            electiveTree,
+            electivesGroup2, 
+            electiveTree2
+        );
+    
+        pages.getChildren().addAll(infoPage, majorCoursesPage, majorElectivesPage);
 
 
 
@@ -530,7 +669,7 @@ public class Main extends Application {
         });
             
         // Instantiate the Scene
-        Scene scene = new Scene(root, 1250, 600);
+        Scene scene = new Scene(root, 1250, 700);
         scene.getStylesheets().add(getClass().getResource("styles.css").toExternalForm());
         stage.setScene(scene);
         stage.show();
@@ -538,7 +677,16 @@ public class Main extends Application {
 
     // TO-DO
     private void initializeCourses() {
-        // CS Core Courses
+        // ------- CS CLASSES --------
+        // CS Major Required Courses
+        Course BIO1110 = new Course(
+            "BIO",
+            CourseCategory.MAJOR,
+            1110,
+            "Life Science",
+            3
+        );
+
         Course CS1300 = new Course(
             "CS",
             CourseCategory.MAJOR,
@@ -683,7 +831,6 @@ public class Main extends Application {
         );
         CS4800.addPrerequisite(CS2400);
 
-        // Math Core Courses
         Course MAT1140 = new Course(
             "MAT",
             CourseCategory.MAJOR,
@@ -710,7 +857,7 @@ public class Main extends Application {
         );
         STA2260.addPrerequisite(MAT1140);
 
-        //Elective Courses
+        // CS Elective Courses (group 1)
         Course CS3520 = new Course(
             "CS",
             CourseCategory.MAJOR_ELECTIVE,
@@ -903,8 +1050,60 @@ public class Main extends Application {
             "Special Topics for Upper Division Students",
             1
         );
-        // All courses
-        // major courses
+
+        // CS Elective courses (group 2)
+        Course CS2250 = new Course(
+            "CS",
+            CourseCategory.MAJOR_ELECTIVE,
+            2250,
+            "Introduction to Web Science and Technology",
+            3
+        );
+        CS2250.setGroup(2);
+        CS2250.addPrerequisite(CS1400);
+
+        Course CS2410 = new Course(
+            "CS",
+            CourseCategory.MAJOR_ELECTIVE,
+            2410,
+            "Fundamentals of Data Science",
+            3
+        );
+        CS2410.setGroup(2);
+        CS2410.addPrerequisite(CS1400);
+        
+        Course CS2450 = new Course(
+            "CS",
+            CourseCategory.MAJOR_ELECTIVE,
+            2450,
+            "User Interace Design and Programming",
+            3
+        );
+        CS2450.setGroup(2);
+        CS2450.addPrerequisite(CS1400);
+
+        Course CS2520 = new Course(
+            "CS",
+            CourseCategory.MAJOR_ELECTIVE,
+            2520,
+            "Python for Programmers",
+            3
+        );
+        CS2520.setGroup(2);
+        CS2520.addPrerequisite(CS1400);
+        
+        Course CS2560 = new Course(
+            "CS",
+            CourseCategory.MAJOR_ELECTIVE,
+            2410,
+            "C++ Programming",
+            3
+        );
+        CS2560.setGroup(2);
+        CS2560.addPrerequisite(CS1400);
+
+        // CS Major courses
+        allCsCourses.add(BIO1110);
         allCsCourses.add(CS1300);
         allCsCourses.add(CS1400);
         allCsCourses.add(CS2400);
@@ -921,13 +1120,11 @@ public class Main extends Application {
         allCsCourses.add(CS4310);
         allCsCourses.add(CS4630);
         allCsCourses.add(CS4800);
-
-        // Required math Courses
         allCsCourses.add(MAT1140);
         allCsCourses.add(MAT1150);
         allCsCourses.add(STA2260);
 
-        // elective courses
+        // CS Elective courses (group 1)
         allCsElectives.add(CS3520);
         allCsElectives.add(CS3700);
         allCsElectives.add(CS3800);
@@ -949,6 +1146,18 @@ public class Main extends Application {
         allCsElectives.add(CS4750);
         allCsElectives.add(CS4810);
         allCsElectives.add(CS4990);
+
+        // CS Elective courses (group 2)
+        allCsElectives.add(CS2250);
+        allCsElectives.add(CS2410);
+        allCsElectives.add(CS2450);
+        allCsElectives.add(CS2520);
+        allCsElectives.add(CS2560);
+
+        // ------- ME CLASSES --------
+
+        // ------- GE CLASSES --------
+
     }
 
     // TO-DO

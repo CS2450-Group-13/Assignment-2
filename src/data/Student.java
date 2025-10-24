@@ -1,4 +1,6 @@
 package src.data;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Student {
     private String name;
@@ -9,6 +11,7 @@ public class Student {
     private Major major;
     private boolean gradStatus;
     private double gpa;
+    private List<Course> completedCourses = new ArrayList<>();
 
     public Student(
         String name, 
@@ -58,6 +61,16 @@ public class Student {
         return gpa;
     }
 
+    public int getCompletedUnits() {
+        int completedUnits = 0;
+        
+        for (Course c : completedCourses) {
+            completedUnits += c.getUnits();
+        }
+
+        return completedUnits;        
+    }
+
     public String getStanding() {
         if (gpa >= 2.3) {
             return "Good Standing";
@@ -81,5 +94,9 @@ public class Student {
 
     public void setMajor(Major major) {
         this.major = major;
+    }
+
+    public void addCompletedCourse(Course course) {
+        completedCourses.add(course);
     }
 }

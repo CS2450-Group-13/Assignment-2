@@ -36,6 +36,7 @@ public class Major {
             totalUnits += c.getUnits();
         }
         totalUnits += 17;
+        totalUnits += 48;
 
         return totalUnits;
     }

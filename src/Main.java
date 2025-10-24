@@ -27,23 +27,28 @@ import src.data.Major;
 import src.data.Student;
 
 public class Main extends Application {
-
-    private final List<Course> allCsCourses = new ArrayList<>();
-    private final List<Course> allCsElectives = new ArrayList<>();
-    private final List<Course> allGeCourses = new ArrayList<>();
+    
     private final List<Major> allMajors = new ArrayList<>();
     private final List<Student> allStudents = new ArrayList<>();
-
     
+    private final List<Course> areaA_GE = new ArrayList<>();
+    private final List<Course> areaB_GE = new ArrayList<>();
+    private final List<Course> areaC_GE = new ArrayList<>();
+    private final List<Course> areaD_GE = new ArrayList<>();
+    private final List<Course> areaE_GE = new ArrayList<>();
+    
+    private final List<Course> allCsCourses = new ArrayList<>();
+    private final List<Course> allCsElectives = new ArrayList<>();
+
     @Override
     public void start(Stage stage) throws Exception {
         int studentChoice = 0; // Change student 0-2
 
         // initialize data
+        initializeGECourses();
         initializeCourses();
         initializeMajors();
         initializeStudents();
-
         
         Student currStudent = allStudents.get(0);
         Major currMajor = allMajors.get(0);
@@ -230,14 +235,88 @@ public class Main extends Application {
         
         bottomInfo.getChildren().add(currAcademicSum);
         bottomInfo.setSpacing(10);
-        
+
+        // ## General Education Page
+        Label genEdInfoLabel = new Label("General Education Requirements: 48 units");
+        genEdInfoLabel.getStyleClass().add("requirements-label");
+        genEdInfoLabel.setPadding(new Insets(10, 0, 15, 30));
+
+        Label areaAInfoLabel = new Label("Area A. English Language Communication and Critical Thinking (9 units)");
+        Label areaBInfoLabel = new Label("Area B. Scientific Inquiry and Quantitative Reasoning (12 units)");
+        Label areaCInfoLabel = new Label("Area C. Arts and Humanities (12 units)");
+        Label areaDInfoLabel = new Label("Area D. Social Sciences (9 units)");
+        Label areaEInfoLabel = new Label("Area E. Lifelong Learning and Self-Development (3 units)");
+
+        VBox genEdInfoPage = new VBox(
+            genEdInfoLabel,
+            areaAInfoLabel,
+            new VBox(
+                new Label("At least 3 units from each sub-area") {{
+                    getStyleClass().add("italic-text");
+                }},
+                new Label("1. Oral Communication"),
+                new Label("2. Written Communication"),
+                new Label("3. Critical Thinking")
+            ) {{
+                setPadding(new Insets(10, 0, 15, 50));
+            }},
+            areaBInfoLabel,
+            new VBox(
+                new Label("At least 3 units from each sub-area") {{
+                    getStyleClass().add("italic-text");
+                }},
+                new Label("1. Physical Sciences"),
+                new Label("2. Life Sciences"),
+                new Label("3. Mathematics/Quantitative Reasoning")
+            ) {{
+                setPadding(new Insets(10, 0, 15, 50));
+            }},
+            areaCInfoLabel,
+            new VBox(
+                new Label("At least 3 units from each sub-area and 3 additional units from sub-areas 1 and/or 2") {{
+                    getStyleClass().add("italic-text");
+                }},
+                new Label("1. Visual and Performing Arts"),
+                new Label("2. Literature, Modern Languages, Philosophy, and Civilization")
+            ) {{
+                setPadding(new Insets(10, 0, 15, 50));
+            }},
+            areaDInfoLabel,
+            new VBox(
+                new Label("At least 3 units from each sub-area") {{
+                    getStyleClass().add("italic-text");
+                }},
+                new Label("1. U.S. History and American Ideals"),
+                new Label("2. U.S. Constitution and California Government"),
+                new Label("3. Social Sciences: Principles, Methodologies, Value Systems, and Ethics")
+            ) {{
+                setPadding(new Insets(10, 0, 15, 50));
+            }},
+            areaEInfoLabel, 
+            new Label("See course catalog page") {{
+                setPadding(new Insets(0, 0, 10, 50));
+            }}
+        );
+
+        areaAInfoLabel.getStyleClass().add("gen-ed-label");
+        areaBInfoLabel.getStyleClass().add("gen-ed-label");
+        areaCInfoLabel.getStyleClass().add("gen-ed-label");
+        areaDInfoLabel.getStyleClass().add("gen-ed-label");
+        areaEInfoLabel.getStyleClass().add("gen-ed-label");
+
+        areaAInfoLabel.setPadding(new Insets(10, 0, 15, 50));
+        areaBInfoLabel.setPadding(new Insets(10, 0, 15, 50));
+        areaCInfoLabel.setPadding(new Insets(10, 0, 15, 50));
+        areaDInfoLabel.setPadding(new Insets(10, 0, 15, 50));
+        areaEInfoLabel.setPadding(new Insets(10, 0, 15, 50));
+
         // ## Major Courses Page
         VBox majorCoursesPage = new VBox();
         majorCoursesPage.setPadding(new Insets(10, 20, 10, 20));
         majorCoursesPage.setSpacing(8);
 
         Label majorCoursesHeader = new Label("Major Required: " + currMajor.getMajorRequiredUnits() + " units");
-        majorCoursesHeader.getStyleClass().add("info-label");
+        majorCoursesHeader.getStyleClass().add("requirements-label");
         
         // Create TreeView for expandable course information
         TreeView<String> courseTree = new TreeView<>();
@@ -373,7 +452,10 @@ public class Main extends Application {
         Label majorElectivesHeader = new Label("Major Electives: 17 Units");
         Label electivesGroup1 = new Label(" At least 11 units from:");
         Label electivesGroup2 = new Label(" No more than 6 units from:");
-        majorElectivesHeader.getStyleClass().add("info-label");
+        majorElectivesHeader.getStyleClass().add("requirements-label");
+
+        electivesGroup1.getStyleClass().add("elective-group");
+        electivesGroup2.getStyleClass().add("elective-group");
 
         // TreeView for electives group 1
         TreeView<String> electiveTree = new TreeView<>();
@@ -622,8 +704,12 @@ public class Main extends Application {
             electiveTree2
         );
     
-        pages.getChildren().addAll(infoPage, majorCoursesPage, majorElectivesPage);
-
+        pages.getChildren().addAll(
+            infoPage, 
+            genEdInfoPage, 
+            majorCoursesPage, 
+            majorElectivesPage
+        );
 
 
     ////////////////////////////////////////////////////////
@@ -638,38 +724,76 @@ public class Main extends Application {
         // ----------- | Tab Switching Logic | -------------
 
         // default page
-        infoPage.setVisible(true); 
+        infoPage.setVisible(true);
+        genEdInfoPage.setVisible(false);
         majorCoursesPage.setVisible(false);
         majorElectivesPage.setVisible(false);
 
+        infoLabel.getStyleClass().add("nav-item-clicked");
+
         infoLabel.setOnMouseClicked(e -> {
             infoPage.setVisible(true);
+            genEdInfoPage.setVisible(false);
             majorCoursesPage.setVisible(false);
             majorElectivesPage.setVisible(false);
+
+            infoLabel.getStyleClass().add("nav-item-clicked");
+            genEdLabel.getStyleClass().remove("nav-item-clicked");
+            majorCoursesLabel.getStyleClass().remove("nav-item-clicked");
+            majorElecLabel.getStyleClass().remove("nav-item-clicked");
+            catalogLabel.getStyleClass().remove("nav-item-clicked");
         });
         genEdLabel.setOnMouseClicked(e -> {
             infoPage.setVisible(false);
+            genEdInfoPage.setVisible(true);
             majorCoursesPage.setVisible(false);
             majorElectivesPage.setVisible(false);
+
+            infoLabel.getStyleClass().remove("nav-item-clicked");
+            genEdLabel.getStyleClass().add("nav-item-clicked");
+            majorCoursesLabel.getStyleClass().remove("nav-item-clicked");
+            majorElecLabel.getStyleClass().remove("nav-item-clicked");
+            catalogLabel.getStyleClass().remove("nav-item-clicked");
         });
         majorCoursesLabel.setOnMouseClicked(e -> {
             infoPage.setVisible(false);
+            genEdInfoPage.setVisible(false);
             majorCoursesPage.setVisible(true);
             majorElectivesPage.setVisible(false);
+
+            infoLabel.getStyleClass().remove("nav-item-clicked");
+            genEdLabel.getStyleClass().remove("nav-item-clicked");
+            majorCoursesLabel.getStyleClass().add("nav-item-clicked");
+            majorElecLabel.getStyleClass().remove("nav-item-clicked");
+            catalogLabel.getStyleClass().remove("nav-item-clicked");
         });
         majorElecLabel.setOnMouseClicked(e -> {
             infoPage.setVisible(false);
+            genEdInfoPage.setVisible(false);
             majorCoursesPage.setVisible(false);
             majorElectivesPage.setVisible(true);
+
+            infoLabel.getStyleClass().remove("nav-item-clicked");
+            genEdLabel.getStyleClass().remove("nav-item-clicked");
+            majorCoursesLabel.getStyleClass().remove("nav-item-clicked");
+            majorElecLabel.getStyleClass().add("nav-item-clicked");
+            catalogLabel.getStyleClass().remove("nav-item-clicked");
         });
         catalogLabel.setOnMouseClicked(e -> {
             infoPage.setVisible(false); 
+            genEdInfoPage.setVisible(false);
             majorCoursesPage.setVisible(false);
             majorElectivesPage.setVisible(false);
+
+            infoLabel.getStyleClass().remove("nav-item-clicked");
+            genEdLabel.getStyleClass().remove("nav-item-clicked");
+            majorCoursesLabel.getStyleClass().remove("nav-item-clicked");
+            majorElecLabel.getStyleClass().remove("nav-item-clicked");
+            catalogLabel.getStyleClass().add("nav-item-clicked");
         });
             
         // Instantiate the Scene
-        Scene scene = new Scene(root, 1250, 700);
+        Scene scene = new Scene(root, 1250, 840);
         scene.getStylesheets().add(getClass().getResource("styles.css").toExternalForm());
         stage.setScene(scene);
         stage.show();
@@ -1158,6 +1282,292 @@ public class Main extends Application {
 
         // ------- GE CLASSES --------
 
+    }
+
+    private void initializeGECourses() {
+        // GE Area A
+        // Group 1
+        Course COM1110 = new Course(
+            "COM",
+            CourseCategory.GENERAL_EDUCATION,
+            1110,
+            "Public Speaking",
+            3
+        );
+        COM1110.setGroup(1);
+
+        Course COM2204 = new Course(
+            "COM",
+            CourseCategory.GENERAL_EDUCATION,
+            2204,
+            "Advocacy and Argument",
+            3
+        );
+        COM2204.setGroup(1);
+
+        // Group 2
+        Course ENG1101 = new Course(
+            "ENG",
+            CourseCategory.GENERAL_EDUCATION,
+            2204,
+            "Stretch Composition II",
+            3
+        );
+        ENG1101.setGroup(2);
+
+        Course ENG1103 = new Course(
+            "ENG",
+            CourseCategory.GENERAL_EDUCATION,
+            2204,
+            "First Year Compositon",
+            3
+        );
+        ENG1103.setGroup(2);
+
+        // Group 3
+        Course PHL2020 = new Course(
+            "PHL",
+            CourseCategory.GENERAL_EDUCATION,
+            2020,
+            "Critical Thinking",
+            3
+        );
+        PHL2020.setGroup(3);
+
+        Course ENG2105 = new Course(
+            "ENG",
+            CourseCategory.GENERAL_EDUCATION,
+            2105,
+            "Written Reasoning",
+            3
+        );
+        ENG2105.setGroup(3);
+
+        // GE Area B
+        // Group 1
+        Course AST1010 = new Course(
+            "AST",
+            CourseCategory.GENERAL_EDUCATION,
+            1010,
+            "Stars, Galxies, and the Universe",
+            3
+        );
+        AST1010.setGroup(1);
+
+        Course GEO1010 = new Course(
+            "GEO",
+            CourseCategory.GENERAL_EDUCATION,
+            1010,
+            "Physical Geography",
+            3
+        );
+        GEO1010.setGroup(1);
+
+        Course GSC1010 = new Course(
+            "GSC",
+            CourseCategory.GENERAL_EDUCATION,
+            1100,
+            "Water in a Changing World",
+            3
+        );
+        GSC1010.setGroup(1);
+
+        // Group 2
+        Course ANT1010 = new Course(
+            "ANT",
+            CourseCategory.GENERAL_EDUCATION,
+            1010,
+            "Introduction to Biological Anthropology",
+            3
+        );
+        ANT1010.setGroup(2);
+
+        Course BIO1020 = new Course(
+            "BIO",
+            CourseCategory.GENERAL_EDUCATION,
+            1020,
+            "Plagues, Pandemics, and Bioterrorism",
+            3
+        );
+        BIO1020.setGroup(2);
+
+        Course BIO2700 = new Course(
+            "GSC",
+            CourseCategory.GENERAL_EDUCATION,
+            2700,
+            "Age of the Dinosaurs",
+            3
+        );
+        BIO2700.setGroup(2);
+
+        // Group 3
+        Course BIO3010 = new Course(
+            "BIO",
+            CourseCategory.GENERAL_EDUCATION,
+            3010,
+            "Human Sexuality",
+            3
+        );
+        BIO3010.setGroup(3);
+
+        Course BIO3030 = new Course(
+            "BIO",
+            CourseCategory.GENERAL_EDUCATION,
+            3030,
+            "Sexually Transmitted Diseases and Safer Sex",
+            3
+        );
+        BIO3030.setGroup(3);
+
+        Course BIO3090 = new Course(
+            "BIO",
+            CourseCategory.GENERAL_EDUCATION,
+            3090,
+            "Biology of the Brain",
+            3
+        );
+        BIO3090.setGroup(3);
+
+        // GE Area C
+        // Group 1
+        Course COM2280 = new Course(
+            "COM",
+            CourseCategory.GENERAL_EDUCATION,
+            2280,
+            "Understanding and Appreciating the Photographic Image",
+            3
+        );
+        COM2280.setGroup(1);
+
+        Course DAN2020 = new Course(
+            "DAN",
+            CourseCategory.GENERAL_EDUCATION,
+            2020,
+            "World Dance and Culture",
+            3
+        );
+        DAN2020.setGroup(1);
+
+        // Group 2
+        Course ANT1040 = new Course(
+            "ANT",
+            CourseCategory.GENERAL_EDUCATION,
+            1040,
+            "Introduction to Linguistic Anthropology",
+            3
+        );
+        ANT1040.setGroup(2);
+
+        Course ENG2500 = new Course(
+            "ENG",
+            CourseCategory.GENERAL_EDUCATION,
+            2500,
+            "Introduction to Shakespeare",
+            3
+        );
+        ENG2500.setGroup(2);
+
+        // GE Area D
+        // Group 1
+        Course HST2201 = new Course(
+            "HST",
+            CourseCategory.GENERAL_EDUCATION,
+            2201,
+            "United States History to 1877",
+            3
+        );
+        HST2201.setGroup(1);
+
+        Course HST2202 = new Course(
+            "HST",
+            CourseCategory.GENERAL_EDUCATION,
+            2202,
+            "United States History, 1877-Present",
+            3
+        );
+        HST2202.setGroup(1);
+
+        // Group 2
+        Course PLS2010 = new Course(
+            "PLS",
+            CourseCategory.GENERAL_EDUCATION,
+            2010,
+            "Introducton to American Government",
+            3
+        );
+        PLS2010.setGroup(2);
+
+        // Group 3
+        Course AG1010 = new Course(
+            "AG",
+            CourseCategory.GENERAL_EDUCATION,
+            1010,
+            "Agriculture & The Modern World",
+            3
+        );
+        AG1010.setGroup(3);
+
+        Course AMM1200 = new Course(
+            "AMM",
+            CourseCategory.GENERAL_EDUCATION,
+            1200,
+            "American Demographics and Lifestyles",
+            3
+        );
+        AMM1200.setGroup(3);
+
+        // GE Area E
+        Course AVS2211 = new Course(
+            "AVS",
+            CourseCategory.GENERAL_EDUCATION,
+            2211,
+            "Drugs and Society",
+            3
+        );
+
+        Course KIN2070 = new Course(
+            "KIN",
+            CourseCategory.GENERAL_EDUCATION,
+            2070,
+            "Stress Management for Healthy Living",
+            3
+        );
+
+        // GE Area A
+        areaA_GE.add(COM1110);
+        areaA_GE.add(COM2204);
+        areaA_GE.add(ENG1101);
+        areaA_GE.add(ENG1103);
+        areaA_GE.add(PHL2020);
+        areaA_GE.add(ENG2105);
+
+        // GE Area B
+        areaB_GE.add(AST1010);
+        areaB_GE.add(GEO1010);
+        areaB_GE.add(GSC1010);
+        areaB_GE.add(ANT1010);
+        areaB_GE.add(BIO1020);
+        areaB_GE.add(BIO2700);
+        areaB_GE.add(BIO3010);
+        areaB_GE.add(BIO3030);
+        areaB_GE.add(BIO3090);
+
+        // GE Area C
+        areaC_GE.add(COM2280);
+        areaC_GE.add(DAN2020);
+        areaC_GE.add(ANT1040);
+        areaC_GE.add(ENG2500);
+
+        // GE Area D
+        areaD_GE.add(HST2201);
+        areaD_GE.add(HST2202);
+        areaD_GE.add(PLS2010);
+        areaD_GE.add(AG1010);
+        areaD_GE.add(AMM1200);
+
+        // GE Area E
+        areaE_GE.add(AVS2211);
+        areaE_GE.add(KIN2070);
     }
 
     // TO-DO

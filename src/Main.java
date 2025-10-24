@@ -28,7 +28,8 @@ import src.data.Student;
 
 public class Main extends Application {
 
-    private final List<Course> allCourses = new ArrayList<>();
+    private final List<Course> allCsCourses = new ArrayList<>();
+    private final List<Course> allCsElectives = new ArrayList<>();
     private final List<Major> allMajors = new ArrayList<>();
     private final List<Student> allStudents = new ArrayList<>();
 
@@ -63,11 +64,8 @@ public class Main extends Application {
         4440, 4450, 4500, 4600, 4650, 4651, 4680, 4700, 4750, 4810, 4990
         ));
 
-        java.util.List<Course> electiveCourses = allCourses.stream()
-        .filter(c -> "CS".equalsIgnoreCase(c.getCourseMajor()))
-        .filter(c ->c.getCourseCategory() == CourseCategory.MAJOR_ELECTIVE)
-        .collect(java.util.stream.Collectors.toList());
-
+        java.util.List<Course> electiveCourses = currMajor.getElectives();
+        
         java.util.Set<Integer> completedCourseIds = new java.util.HashSet<>();
 
         completedCourseIds.add(1400); 
@@ -230,7 +228,7 @@ public class Main extends Application {
         bottomInfo.getChildren().add(currAcademicSum);
         bottomInfo.setSpacing(10);
         
-        // Major Courses Page with TreeView 
+        // Major Courses Page
         VBox majorCoursesPage = new VBox();
         majorCoursesPage.setPadding(new Insets(10, 20, 10, 20));
         majorCoursesPage.setSpacing(8);
@@ -359,11 +357,12 @@ public class Main extends Application {
     });
 
 
-/////////////////////////////////////////////////////////////// 
-    majorCoursesPage.setSpacing(16);
+    /////////////////////////////////////////////////////////////// 
     
+    majorCoursesPage.setSpacing(16);
     majorCoursesPage.getChildren().addAll(majorCoursesHeader, courseTree);
 
+    // Major Electives Page
     VBox majorElectivesPage = new VBox();
     majorElectivesPage.setPadding(new Insets(10, 20, 10, 20));
     majorElectivesPage.setSpacing(8);
@@ -371,7 +370,7 @@ public class Main extends Application {
     Label majorElectivesHeader = new Label("Major Electives");
     majorElectivesHeader.getStyleClass().add("info-label");
 
-// TreeView for electives
+    // TreeView for electives
     TreeView<String> electiveTree = new TreeView<>();
     electiveTree.setShowRoot(false);
     TreeItem<String> electRoot = new TreeItem<>("Electives");
@@ -427,70 +426,71 @@ public class Main extends Application {
     -fx-background-color: white;
     """);
 
-// ===== Cell factory: same status UI as Major Courses =====
+    // ===== Cell factory: same status UI as Major Courses =====
     electiveTree.setCellFactory(tv -> new TreeCell<String>() {
 
-    // Row: [text] ---spacer---> [statusSquare]
-    private final HBox row = new HBox();
-    private final Label textLbl = new Label();
-    private final Region spacer = new Region();
-    private final Region statusSquare = new Region(); 
+        // Row: [text] ---spacer---> [statusSquare]
+        private final HBox row = new HBox();
+        private final Label textLbl = new Label();
+        private final Region spacer = new Region();
+        private final Region statusSquare = new Region(); 
 
-    {
-        HBox.setHgrow(spacer, Priority.ALWAYS);
-        row.setAlignment(Pos.CENTER_LEFT);
-        row.setSpacing(8);
-        statusSquare.setMinSize(12, 12);
-        statusSquare.setPrefSize(12, 12);
-        statusSquare.setMaxSize(12, 12);
-        row.getChildren().addAll(textLbl, spacer, statusSquare);
-    }
-
-    @Override
-    protected void updateItem(String item, boolean empty) {
-        super.updateItem(item, empty);
-
-        setText(null);
-        setGraphic(null);
-        setStyle("");
-        row.setStyle("");
-        textLbl.setText("");
-        textLbl.setStyle("");
-        statusSquare.setStyle("-fx-background-color: transparent;");
-
-        if (empty || item == null) return;
-
-        textLbl.setText(item);
-        TreeItem<String> ti = getTreeItem();
-        boolean isTopLevel = (ti != null && ti.getParent() == electRoot);
-
-        if (isTopLevel) {
-            Course course = electNodeToCourse.get(ti);
-            boolean completed = (course != null && completedCourseIds.contains(course.getCourseId()));
-
-            textLbl.setStyle("-fx-font-weight: bold;");
-
-            if (completed) {
-                row.setStyle("-fx-background-color: #e6ffe6; -fx-background-radius: 6;");
-                statusSquare.setStyle("-fx-background-color: transparent;");
-            } else {
-                statusSquare.setStyle("-fx-background-color: #d32f2f; -fx-background-radius: 2;");
-            }
-            setGraphic(row);
-        } else {
-            if (item.endsWith(":")) setStyle("-fx-font-weight: bold;");
-            setText(item);
+        {
+            HBox.setHgrow(spacer, Priority.ALWAYS);
+            row.setAlignment(Pos.CENTER_LEFT);
+            row.setSpacing(8);
+            statusSquare.setMinSize(12, 12);
+            statusSquare.setPrefSize(12, 12);
+            statusSquare.setMaxSize(12, 12);
+            row.getChildren().addAll(textLbl, spacer, statusSquare);
         }
-    }
-});
 
-majorElectivesPage.setSpacing(16);
-majorElectivesPage.getChildren().addAll(majorElectivesHeader, electiveTree);
-pages.getChildren().addAll(infoPage, majorCoursesPage,majorElectivesPage);
+        @Override
+        protected void updateItem(String item, boolean empty) {
+            super.updateItem(item, empty);
+
+            setText(null);
+            setGraphic(null);
+            setStyle("");
+            row.setStyle("");
+            textLbl.setText("");
+            textLbl.setStyle("");
+            statusSquare.setStyle("-fx-background-color: transparent;");
+
+            if (empty || item == null) return;
+
+            textLbl.setText(item);
+            TreeItem<String> ti = getTreeItem();
+            boolean isTopLevel = (ti != null && ti.getParent() == electRoot);
+
+            if (isTopLevel) {
+                Course course = electNodeToCourse.get(ti);
+                boolean completed = (course != null && completedCourseIds.contains(course.getCourseId()));
+
+                textLbl.setStyle("-fx-font-weight: bold;");
+
+                if (completed) {
+                    row.setStyle("-fx-background-color: #e6ffe6; -fx-background-radius: 6;");
+                    statusSquare.setStyle("-fx-background-color: transparent;");
+                } else {
+                    statusSquare.setStyle("-fx-background-color: #d32f2f; -fx-background-radius: 2;");
+                }
+                
+                setGraphic(row);
+            } else {
+                if (item.endsWith(":")) setStyle("-fx-font-weight: bold;");
+                setText(item);
+            }
+        }
+    });
+
+    majorElectivesPage.setSpacing(16);
+    majorElectivesPage.getChildren().addAll(majorElectivesHeader, electiveTree);
+    pages.getChildren().addAll(infoPage, majorCoursesPage,majorElectivesPage);
 
 
 
-////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////
  
 
         // ----------- | ROOT | -----------
@@ -503,7 +503,6 @@ pages.getChildren().addAll(infoPage, majorCoursesPage,majorElectivesPage);
 
         // default page
         infoPage.setVisible(true); 
-
         majorCoursesPage.setVisible(false);
         majorElectivesPage.setVisible(false);
 
@@ -909,50 +908,50 @@ pages.getChildren().addAll(infoPage, majorCoursesPage,majorElectivesPage);
         );
         // All courses
         // major courses
-        allCourses.add(CS1300);
-        allCourses.add(CS1400);
-        allCourses.add(CS2400);
-        allCourses.add(CS2600);
-        allCourses.add(CS2610);
-        allCourses.add(CS2640);
-        allCourses.add(CS3010);
-        allCourses.add(CS3110);
-        allCourses.add(CS3310);
-        allCourses.add(CS3560);
-        allCourses.add(CS3650);
-        allCourses.add(CS3750W);
-        allCourses.add(CS4080);
-        allCourses.add(CS4310);
-        allCourses.add(CS4630);
-        allCourses.add(CS4800);
+        allCsCourses.add(CS1300);
+        allCsCourses.add(CS1400);
+        allCsCourses.add(CS2400);
+        allCsCourses.add(CS2600);
+        allCsCourses.add(CS2610);
+        allCsCourses.add(CS2640);
+        allCsCourses.add(CS3010);
+        allCsCourses.add(CS3110);
+        allCsCourses.add(CS3310);
+        allCsCourses.add(CS3560);
+        allCsCourses.add(CS3650);
+        allCsCourses.add(CS3750W);
+        allCsCourses.add(CS4080);
+        allCsCourses.add(CS4310);
+        allCsCourses.add(CS4630);
+        allCsCourses.add(CS4800);
 
-        // Math Courses
-        allCourses.add(MAT1140);
-        allCourses.add(MAT1150);
-        allCourses.add(STA2260);
+        // Required math Courses
+        allCsCourses.add(MAT1140);
+        allCsCourses.add(MAT1150);
+        allCsCourses.add(STA2260);
 
         // elective courses
-        allCourses.add(CS3520);
-        allCourses.add(CS3700);
-        allCourses.add(CS3800);
-        allCourses.add(CS4110);
-        allCourses.add(CS4200);
-        allCourses.add(CS4210);
-        allCourses.add(CS4220);
-        allCourses.add(CS4230);
-        allCourses.add(CS4250);
-        allCourses.add(CS4350);
-        allCourses.add(CS4440);
-        allCourses.add(CS4450);
-        allCourses.add(CS4500);
-        allCourses.add(CS4600);
-        allCourses.add(CS4650);
-        allCourses.add(CS4651);
-        allCourses.add(CS4680);
-        allCourses.add(CS4700);
-        allCourses.add(CS4750);
-        allCourses.add(CS4810);
-        allCourses.add(CS4990);
+        allCsElectives.add(CS3520);
+        allCsElectives.add(CS3700);
+        allCsElectives.add(CS3800);
+        allCsElectives.add(CS4110);
+        allCsElectives.add(CS4200);
+        allCsElectives.add(CS4210);
+        allCsElectives.add(CS4220);
+        allCsElectives.add(CS4230);
+        allCsElectives.add(CS4250);
+        allCsElectives.add(CS4350);
+        allCsElectives.add(CS4440);
+        allCsElectives.add(CS4450);
+        allCsElectives.add(CS4500);
+        allCsElectives.add(CS4600);
+        allCsElectives.add(CS4650);
+        allCsElectives.add(CS4651);
+        allCsElectives.add(CS4680);
+        allCsElectives.add(CS4700);
+        allCsElectives.add(CS4750);
+        allCsElectives.add(CS4810);
+        allCsElectives.add(CS4990);
     }
 
     // TO-DO
@@ -960,14 +959,21 @@ pages.getChildren().addAll(infoPage, majorCoursesPage,majorElectivesPage);
         Major CS = new Major("Computer Science");
         Major ME = new Major("Mechanical Engineering");
 
-        for (Course c : allCourses) {
-            String m = c.getCourseMajor();
-            if ("CS".equalsIgnoreCase(c.getCourseMajor()) ||
-                "MAT".equalsIgnoreCase(c.getCourseMajor()) ||
-                "STA".equalsIgnoreCase(c.getCourseMajor())){
+        for (Course c : allCsCourses) {
+            String s = c.getCourseMajor();
+            if ("CS".equalsIgnoreCase(s) ||
+                "MAT".equalsIgnoreCase(s) ||
+                "STA".equalsIgnoreCase(s)) {
                 CS.addCourse(c); 
                 }
             }
+
+        for (Course c : allCsElectives) {
+            String s = c.getCourseMajor();
+            if ("CS".equalsIgnoreCase(s)) {
+                CS.addElective(c);
+            }
+        }
 
         allMajors.add(CS);
         allMajors.add(ME);

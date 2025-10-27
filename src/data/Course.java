@@ -1,4 +1,5 @@
 package src.data;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -8,6 +9,7 @@ public class Course {
     private String name;
     private String courseMajor;
     private int courseNum;
+    private String courseSuffix;
     private int courseId;
     private int units;
     private int group = 0;
@@ -19,16 +21,19 @@ public class Course {
         this.courseMajor = courseMajor;
         this.category = category;
         this.courseNum = courseNum;
+        this.courseSuffix = "";
         this.name = name;
         this.units = units;
         this.courseId = random.nextInt(1000000) + random.nextInt(1000000);
         this.prerequisites = new ArrayList<>();
     }
 
-    public Course(String courseMajor, CourseCategory category, int courseNum, String name, int units, List<Course> prerequisites) {
+    public Course(String courseMajor, CourseCategory category, int courseNum, String name, int units,
+            List<Course> prerequisites) {
         this.courseMajor = courseMajor;
         this.category = category;
         this.courseNum = courseNum;
+        this.courseSuffix = "";
         this.name = name;
         this.units = units;
         this.courseId = random.nextInt(1000000) + random.nextInt(1000000);
@@ -38,6 +43,7 @@ public class Course {
     public String getName() {
         return name;
     }
+
     public String getCourseMajor() {
         return courseMajor;
     }
@@ -76,7 +82,7 @@ public class Course {
 
     @Override
     public String toString() {
-        return courseMajor + courseNum + " " + name;
+        return courseMajor + " " + courseNum + courseSuffix + " - " + name;
     }
 
     public void setGroup(int group) {
@@ -85,6 +91,14 @@ public class Course {
 
     public int getGroup() {
         return group;
+    }
+
+    public void setCourseSuffix(String suffix) {
+        this.courseSuffix = (suffix != null) ? suffix : "";
+    }
+
+    public String getCourseSuffix() {
+        return courseSuffix;
     }
 
 }

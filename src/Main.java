@@ -11,6 +11,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TreeCell;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
@@ -40,6 +41,8 @@ public class Main extends Application {
     private final List<Course> allCsCourses = new ArrayList<>();
     private final List<Course> allCsElectives = new ArrayList<>();
 
+    java.util.Set<Integer> completedCourseIds = new java.util.HashSet<>();
+
     @Override
     public void start(Stage stage) throws Exception {
         int studentChoice = 0; // Change student 0-2
@@ -65,7 +68,6 @@ public class Main extends Application {
         }
 
         java.util.List<Course> electiveCourses = currMajor.getElectives();
-        java.util.Set<Integer> completedCourseIds = new java.util.HashSet<>();
 
         completedCourseIds.add(1400); 
         completedCourseIds.add(1300); 
@@ -237,13 +239,13 @@ public class Main extends Application {
         bottomInfo.setSpacing(10);
 
         // ## General Education Page
-        Label genEdInfoLabel = new Label("General Education Requirements: 48 units");
+        Label genEdInfoLabel = new Label("General Education Requirements: 42 units");
         genEdInfoLabel.getStyleClass().add("requirements-label");
         genEdInfoLabel.setPadding(new Insets(10, 0, 15, 30));
 
         Label areaAInfoLabel = new Label("Area A. English Language Communication and Critical Thinking (9 units)");
         Label areaBInfoLabel = new Label("Area B. Scientific Inquiry and Quantitative Reasoning (12 units)");
-        Label areaCInfoLabel = new Label("Area C. Arts and Humanities (12 units)");
+        Label areaCInfoLabel = new Label("Area C. Arts and Humanities (9 units)");
         Label areaDInfoLabel = new Label("Area D. Social Sciences (9 units)");
         Label areaEInfoLabel = new Label("Area E. Lifelong Learning and Self-Development (3 units)");
 
@@ -273,7 +275,7 @@ public class Main extends Application {
             }},
             areaCInfoLabel,
             new VBox(
-                new Label("At least 3 units from each sub-area and 3 additional units from sub-areas 1 and/or 2") {{
+                new Label("At least 3 units from each sub-area") {{
                     getStyleClass().add("italic-text");
                 }},
                 new Label("1. Visual and Performing Arts"),
@@ -313,7 +315,6 @@ public class Main extends Application {
         // ## Major Courses Page
         VBox majorCoursesPage = new VBox();
         majorCoursesPage.setPadding(new Insets(10, 20, 10, 20));
-        majorCoursesPage.setSpacing(8);
 
         Label majorCoursesHeader = new Label("Major Required: " + currMajor.getMajorRequiredUnits() + " units");
         majorCoursesHeader.getStyleClass().add("requirements-label");
@@ -447,7 +448,6 @@ public class Main extends Application {
         // ##Major Electives Page
         VBox majorElectivesPage = new VBox();
         majorElectivesPage.setPadding(new Insets(10, 20, 10, 20));
-        majorElectivesPage.setSpacing(8);
 
         Label majorElectivesHeader = new Label("Major Electives: 17 Units");
         Label electivesGroup1 = new Label(" At least 11 units from:");
@@ -462,7 +462,6 @@ public class Main extends Application {
         electiveTree.setShowRoot(false);
         TreeItem<String> electRoot = new TreeItem<>("Electives");
         electiveTree.setRoot(electRoot);
-
 
         Map<Integer, Course> electById = new HashMap<>();
         Map<Integer, TreeItem<String>> electNodes = new HashMap<>();
@@ -514,46 +513,46 @@ public class Main extends Application {
 
         electiveTree.setPrefHeight(635);
         electiveTree.setStyle("""
-        -fx-font-size: 14px;
-        -fx-background-color: white;
+            -fx-font-size: 14px;
+            -fx-background-color: white;
         """);
 
         // ===== Cell factory: same status UI as Major Courses =====
         electiveTree.setCellFactory(tv -> new TreeCell<String>() {
 
-        // Row: [text] ---spacer---> [statusSquare]
-        private final HBox row = new HBox();
-        private final Label textLbl = new Label();
-        private final Region spacer = new Region();
-        private final Region statusSquare = new Region(); 
+            // Row: [text] ---spacer---> [statusSquare]
+            private final HBox row = new HBox();
+            private final Label textLbl = new Label();
+            private final Region spacer = new Region();
+            private final Region statusSquare = new Region(); 
 
-        {
-            HBox.setHgrow(spacer, Priority.ALWAYS);
-            row.setAlignment(Pos.CENTER_LEFT);
-            row.setSpacing(8);
-            statusSquare.setMinSize(12, 12);
-            statusSquare.setPrefSize(12, 12);
-            statusSquare.setMaxSize(12, 12);
-            row.getChildren().addAll(textLbl, spacer, statusSquare);
-        }
+            {
+                HBox.setHgrow(spacer, Priority.ALWAYS);
+                row.setAlignment(Pos.CENTER_LEFT);
+                row.setSpacing(8);
+                statusSquare.setMinSize(12, 12);
+                statusSquare.setPrefSize(12, 12);
+                statusSquare.setMaxSize(12, 12);
+                row.getChildren().addAll(textLbl, spacer, statusSquare);
+            }
 
-        @Override
-        protected void updateItem(String item, boolean empty) {
-            super.updateItem(item, empty);
+            @Override
+            protected void updateItem(String item, boolean empty) {
+                super.updateItem(item, empty);
 
-            setText(null);
-            setGraphic(null);
-            setStyle("");
-            row.setStyle("");
-            textLbl.setText("");
-            textLbl.setStyle("");
-            statusSquare.setStyle("-fx-background-color: transparent;");
+                setText(null);
+                setGraphic(null);
+                setStyle("");
+                row.setStyle("");
+                textLbl.setText("");
+                textLbl.setStyle("");
+                statusSquare.setStyle("-fx-background-color: transparent;");
 
-            if (empty || item == null) return;
+                if (empty || item == null) return;
 
-            textLbl.setText(item);
-            TreeItem<String> ti = getTreeItem();
-            boolean isTopLevel = (ti != null && ti.getParent() == electRoot);
+                textLbl.setText(item);
+                TreeItem<String> ti = getTreeItem();
+                boolean isTopLevel = (ti != null && ti.getParent() == electRoot);
 
                 if (isTopLevel) {
                     Course course = electNodeToCourse.get(ti);
@@ -703,14 +702,104 @@ public class Main extends Application {
             electivesGroup2, 
             electiveTree2
         );
-    
+        
+        // ##GE Course Catalog page
+        VBox courseCatalogContent = new VBox();
+        courseCatalogContent.setPadding(new Insets(10, 20, 10, 20));
+        courseCatalogContent.setSpacing(16);
+
+        ScrollPane courseCatalogPage = new ScrollPane(courseCatalogContent);
+        courseCatalogPage.setFitToWidth(true);
+        courseCatalogPage.setPannable(true);
+
+        Label areaAHeader = new Label("AREA A - 9 units (At least 3 units from each sub-area)");
+        Label areaAG1Label = new Label("1. Oral Communication");
+        Label areaAG2Label = new Label("2. Written Communication");
+        Label areaAG3Label = new Label("3. Critical Thinking");
+
+        Label areaBHeader = new Label("AREA B - 12 units (At least 3 units from each sub-area)");
+        Label areaBG1Label = new Label("1. Physical Sciences");
+        Label areaBG2Label = new Label("2. Life Sciences");
+        Label areaBG3Label = new Label("3. Mathematics/Quantitative Reasoning");
+
+        Label areaCHeader = new Label("AREA C - 9 units (At least 3 units from each sub-area)");
+        Label areaCG1Label = new Label("1. Visual and Performing Arts");
+        Label areaCG2Label = new Label("2. Literature, Modern Languages, Philosphy, and Civilization");
+
+        Label areaDHeader = new Label("AREA D - 9 units (At least 3 units from each sub-area)");
+        Label areaDG1Label = new Label("1. U.S. History and American Ideals");
+        Label areaDG2Label = new Label("2. U.S. Constitution and California Government");
+        Label areaDG3Label = new Label("3. Social Sciences: Principles, Methodologies, Value Systems, and Ethics");
+
+        Label areaEHeader = new Label("AREA E - 3 units");
+
+        areaAHeader.getStyleClass().add("requirements-label");
+        areaBHeader.getStyleClass().add("requirements-label");
+        areaCHeader.getStyleClass().add("requirements-label");
+        areaDHeader.getStyleClass().add("requirements-label");
+        areaEHeader.getStyleClass().add("requirements-label");
+
+        // TreeViews for area A
+        TreeView<String> areaAG1Tree = displayGESection(areaA_GE, 1);
+        TreeView<String> areaAG2Tree = displayGESection(areaA_GE, 2);
+        TreeView<String> areaAG3Tree = displayGESection(areaA_GE, 3);
+        
+        // TreeViews for area B
+        TreeView<String> areaBG1Tree = displayGESection(areaB_GE, 1);
+        TreeView<String> areaBG2Tree = displayGESection(areaB_GE, 2);
+        TreeView<String> areaBG3Tree = displayGESection(areaB_GE, 3);
+
+        // TreeViews for area C
+        TreeView<String> areaCG1Tree = displayGESection(areaC_GE, 1);
+        TreeView<String> areaCG2Tree = displayGESection(areaC_GE, 2);
+
+        // TreeViews for area D
+        TreeView<String> areaDG1Tree = displayGESection(areaD_GE, 1);
+        TreeView<String> areaDG2Tree = displayGESection(areaD_GE, 2);
+        TreeView<String> areaDG3Tree = displayGESection(areaD_GE, 3);
+
+        // TreeView for area E
+        TreeView<String> areaETree = displayGESection(areaE_GE, 1);
+
+        courseCatalogContent.getChildren().addAll(
+            areaAHeader,
+            areaAG1Label,
+            areaAG1Tree,
+            areaAG2Label,
+            areaAG2Tree,
+            areaAG3Label,
+            areaAG3Tree,
+            areaBHeader,
+            areaBG1Label,
+            areaBG1Tree,
+            areaBG2Label,
+            areaBG2Tree,
+            areaBG3Label,
+            areaBG3Tree,
+            areaCHeader,
+            areaCG1Label,
+            areaCG1Tree,
+            areaCG2Label,
+            areaCG2Tree,
+            areaDHeader,
+            areaDG1Label,
+            areaDG1Tree,
+            areaDG2Label,
+            areaDG2Tree,
+            areaDG3Label,
+            areaDG3Tree,
+            areaEHeader,
+            areaETree
+        );
+        
+        // Add all pages to root StackPane
         pages.getChildren().addAll(
             infoPage, 
             genEdInfoPage, 
             majorCoursesPage, 
-            majorElectivesPage
+            majorElectivesPage,
+            courseCatalogPage
         );
-
 
     ////////////////////////////////////////////////////////
  
@@ -728,6 +817,7 @@ public class Main extends Application {
         genEdInfoPage.setVisible(false);
         majorCoursesPage.setVisible(false);
         majorElectivesPage.setVisible(false);
+        courseCatalogPage.setVisible(false);
 
         infoLabel.getStyleClass().add("nav-item-clicked");
 
@@ -736,6 +826,7 @@ public class Main extends Application {
             genEdInfoPage.setVisible(false);
             majorCoursesPage.setVisible(false);
             majorElectivesPage.setVisible(false);
+            courseCatalogPage.setVisible(false);
 
             infoLabel.getStyleClass().add("nav-item-clicked");
             genEdLabel.getStyleClass().remove("nav-item-clicked");
@@ -748,6 +839,7 @@ public class Main extends Application {
             genEdInfoPage.setVisible(true);
             majorCoursesPage.setVisible(false);
             majorElectivesPage.setVisible(false);
+            courseCatalogPage.setVisible(false);
 
             infoLabel.getStyleClass().remove("nav-item-clicked");
             genEdLabel.getStyleClass().add("nav-item-clicked");
@@ -760,6 +852,7 @@ public class Main extends Application {
             genEdInfoPage.setVisible(false);
             majorCoursesPage.setVisible(true);
             majorElectivesPage.setVisible(false);
+            courseCatalogPage.setVisible(false);
 
             infoLabel.getStyleClass().remove("nav-item-clicked");
             genEdLabel.getStyleClass().remove("nav-item-clicked");
@@ -772,6 +865,7 @@ public class Main extends Application {
             genEdInfoPage.setVisible(false);
             majorCoursesPage.setVisible(false);
             majorElectivesPage.setVisible(true);
+            courseCatalogPage.setVisible(false);
 
             infoLabel.getStyleClass().remove("nav-item-clicked");
             genEdLabel.getStyleClass().remove("nav-item-clicked");
@@ -784,6 +878,7 @@ public class Main extends Application {
             genEdInfoPage.setVisible(false);
             majorCoursesPage.setVisible(false);
             majorElectivesPage.setVisible(false);
+            courseCatalogPage.setVisible(true);
 
             infoLabel.getStyleClass().remove("nav-item-clicked");
             genEdLabel.getStyleClass().remove("nav-item-clicked");
@@ -1524,6 +1619,7 @@ public class Main extends Application {
             "Drugs and Society",
             3
         );
+        AVS2211.setGroup(1);
 
         Course KIN2070 = new Course(
             "KIN",
@@ -1532,6 +1628,7 @@ public class Main extends Application {
             "Stress Management for Healthy Living",
             3
         );
+        KIN2070.setGroup(1);
 
         // GE Area A
         areaA_GE.add(COM1110);
@@ -1630,6 +1727,95 @@ public class Main extends Application {
         allStudents.add(Alice);
         allStudents.add(Bryce);
         allStudents.add(Yelena);
+    }
+
+    private TreeView<String> displayGESection(List<Course> courses, int group) {
+        TreeView<String> treeView = new TreeView<>();
+        treeView.setShowRoot(false);
+        TreeItem<String> treeRoot = new TreeItem<>("areaACourses");
+        treeView.setRoot(treeRoot);
+
+        Map<Integer, Course> courseById = new HashMap<>();
+        Map<Integer, TreeItem<String>> courseNodes = new HashMap<>();
+        Map<TreeItem<String>, Course> listNodeToCourse = new HashMap<>();
+
+        if (!courses.isEmpty()) {
+            for (Course c : courses) {
+                if (c.getGroup() != group)
+                    continue;
+
+                String label = String.format("%s - %s (%d units)",
+                    c.toString(), c.getCourseCategory().getDisplayName(), c.getUnits());
+                TreeItem<String> item = new TreeItem<>(label);
+                treeRoot.getChildren().add(item);
+                courseById.put(c.getCourseId(), c);
+                courseNodes.put(c.getCourseId(), item);
+                listNodeToCourse.put(item, c);
+            }
+        } else {
+            treeRoot.getChildren().add(new TreeItem<>("No General Education classes found"));
+        }
+
+        treeView.setPrefHeight(55);
+        treeView.setStyle("-fx-font-size: 14px; -fx-background-color: white;");
+
+        // ===== Cell factory for area A =====
+        treeView.setCellFactory(tv -> new TreeCell<String>() {
+            private final HBox row = new HBox();
+            private final Label label = new Label();
+            private final Region spacer = new Region();
+            private final Region statusSquare = new Region();
+
+            {
+                HBox.setHgrow(spacer, Priority.ALWAYS);
+                row.setAlignment(Pos.CENTER_LEFT);
+                row.setSpacing(8);
+                statusSquare.setMinSize(12, 12);
+                statusSquare.setPrefSize(12, 12);
+                statusSquare.setMaxSize(12, 12);
+                row.getChildren().addAll(label, spacer, statusSquare);
+            }
+
+            @Override
+            protected void updateItem(String item, boolean empty) {
+                super.updateItem(item, empty);
+
+                setText(null);
+                setGraphic(null);
+                setStyle("");
+                row.setStyle("");
+                label.setText("");
+                label.setStyle("");
+                statusSquare.setStyle("-fx-background-color: transparent;");
+
+                if (empty || item == null) return;
+
+                label.setText(item);
+                TreeItem<String> ti = getTreeItem();
+                boolean isTopLevel = (ti != null && ti.getParent() == treeRoot);
+
+                if (isTopLevel) {
+                    Course course = listNodeToCourse.get(ti);
+                    boolean completed = (course != null && completedCourseIds.contains(course.getCourseId()));
+
+                    label.setStyle("-fx-font-weight: bold;");
+
+                    if (completed) {
+                        row.setStyle("-fx-background-color: #e6ffe6; -fx-background-radius: 6;");
+                        statusSquare.setStyle("-fx-background-color: transparent;");
+                    } else {
+                        statusSquare.setStyle("-fx-background-color: #d32f2f; -fx-background-radius: 2;");
+                    }
+                    
+                    setGraphic(row);
+                } else {
+                    if (item.endsWith(":")) setStyle("-fx-font-weight: bold;");
+                    setText(item);
+                }
+            }     
+        });
+        
+        return treeView;
     }
 
     public static void main(String[] args) {

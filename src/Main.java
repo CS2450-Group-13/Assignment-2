@@ -9,6 +9,7 @@ import java.util.List;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
@@ -22,6 +23,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.Region;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 import src.data.Course;
 import src.data.CourseCategory;
@@ -245,7 +247,7 @@ public class Main extends Application {
         Label areaDInfoLabel = new Label("Area D. Social Sciences (9 units)");
         Label areaEInfoLabel = new Label("Area E. Lifelong Learning and Self-Development (3 units)");
 
-        VBox genEdInfoPage = new VBox(
+        VBox genEdInfoPageContent = new VBox(
                 genEdInfoLabel,
                 areaAInfoLabel,
                 new VBox(
@@ -311,6 +313,8 @@ public class Main extends Application {
                     }
                 });
 
+        ScrollPane genEdInfoPage = new ScrollPane(genEdInfoPageContent);
+
         areaAInfoLabel.getStyleClass().add("gen-ed-label");
         areaBInfoLabel.getStyleClass().add("gen-ed-label");
         areaCInfoLabel.getStyleClass().add("gen-ed-label");
@@ -324,8 +328,12 @@ public class Main extends Application {
         areaEInfoLabel.setPadding(new Insets(10, 0, 15, 50));
 
         // ## Major Courses Page
-        VBox majorCoursesPage = new VBox();
-        majorCoursesPage.setPadding(new Insets(10, 20, 10, 20));
+        VBox majorCoursesContent = new VBox();
+        majorCoursesContent.setPadding(new Insets(10, 20, 10, 20));
+
+        ScrollPane majorCoursesPage = new ScrollPane(majorCoursesContent);
+        majorCoursesPage.setFitToWidth(true);
+        majorCoursesPage.setPannable(true);
 
         Label majorCoursesHeader = new Label("Major Required: " + currMajor.getMajorRequiredUnits() + " units");
         majorCoursesHeader.getStyleClass().add("requirements-label");
@@ -450,12 +458,16 @@ public class Main extends Application {
 
         ///////////////////////////////////////////////////////////////
 
-        majorCoursesPage.setSpacing(16);
-        majorCoursesPage.getChildren().addAll(majorCoursesHeader, courseTree);
+        majorCoursesContent.setSpacing(16);
+        majorCoursesContent.getChildren().addAll(majorCoursesHeader, courseTree);
 
         // ##Major Electives Page
-        VBox majorElectivesPage = new VBox();
-        majorElectivesPage.setPadding(new Insets(10, 20, 10, 20));
+        VBox majorElectivesContent = new VBox();
+        majorElectivesContent.setPadding(new Insets(10, 20, 10, 20));
+
+        ScrollPane majorElectivesPage = new ScrollPane(majorElectivesContent);
+        majorElectivesPage.setFitToWidth(true);
+        majorElectivesPage.setPannable(true);
 
         Label majorElectivesHeader = new Label("Major Electives: 17 Units");
         Label electivesGroup1 = new Label(" At least 11 units from:");
@@ -705,8 +717,8 @@ public class Main extends Application {
             }
         });
 
-        majorElectivesPage.setSpacing(16);
-        majorElectivesPage.getChildren().addAll(
+        majorElectivesContent.setSpacing(16);
+        majorElectivesContent.getChildren().addAll(
                 majorElectivesHeader,
                 electivesGroup1,
                 electiveTree,
@@ -900,7 +912,10 @@ public class Main extends Application {
         });
 
         // Instantiate the Scene
-        Scene scene = new Scene(root, 1250, 900);
+        Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
+        double height = screenBounds.getHeight() * 0.75;
+        double width = screenBounds.getWidth() * 0.80;
+        Scene scene = new Scene(root, width, height);
         scene.getStylesheets().add(getClass().getResource("styles.css").toExternalForm());
         stage.setScene(scene);
         stage.show();
